@@ -140,6 +140,10 @@ export default function LoginUser() {
   return (
     <div className="login-page">
       <div className="login-container">
+        <div className="logo-container">
+          <img src="/web-wolves.png" alt="Wolves Footwear Logo" />
+        </div>
+
         {!showSignup ? (
           <div className="login-box">
             <h1 className="login-title">Login as User:</h1>

@@ -16,6 +16,10 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-container">
+        <div className="logo-container">
+          <img src="/web-wolves.png" alt="Wolves Footwear Logo" />
+        </div>
+        
         <h1 className="login-title">WOLVES FOOTWEAR</h1>
         
         <div className="login-box">
