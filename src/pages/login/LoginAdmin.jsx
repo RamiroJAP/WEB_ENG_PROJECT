@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import './LoginForm.css'
 
 export default function LoginAdmin() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
   const [showSignup, setShowSignup] = useState(false)
+  const [message, setMessage] = useState('')
   const [loginData, setLoginData] = useState({
     username: '',
     password: ''
@@ -27,11 +32,91 @@ export default function LoginAdmin() {
     })
   }
 
+  const handleLogin = (e) => {
+    e.preventDefault()
+    if (!loginData.username || !loginData.password) {
+      setMessage('Please fill in all fields')
+      return
+    }
+    
+    // Check if user exists
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const foundUser = users.find(u => 
+      (u.username === loginData.username || u.email === loginData.username) && 
+      u.password === loginData.password &&
+      u.userType === 'admin'
+    )
+
+    if (foundUser) {
+      login({
+        id: foundUser.id,
+        username: foundUser.username,
+        email: foundUser.email,
+        userType: 'admin'
+      })
+      setMessage('Login successful! Redirecting...')
+      setLoginData({ username: '', password: '' })
+      setTimeout(() => {
+        navigate('/admin')
+      }, 1500)
+    } else {
+      setMessage('Invalid username or password')
+    }
+  }
+
+  const handleSignup = (e) => {
+    e.preventDefault()
+    setMessage('')
+
+    // Validation
+    if (!signupData.username || !signupData.email || !signupData.password) {
+      setMessage('Please fill in all fields')
+      return
+    }
+
+    if (signupData.password.length < 6) {
+      setMessage('Password must be at least 6 characters')
+      return
+    }
+
+    if (!signupData.email.includes('@')) {
+      setMessage('Please enter a valid email')
+      return
+    }
+
+    // Check if user already exists
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    if (users.find(u => u.email === signupData.email)) {
+      setMessage('Email already exists')
+      return
+    }
+
+    // Save new user
+    const newUser = {
+      id: Date.now(),
+      username: signupData.username,
+      email: signupData.email,
+      password: signupData.password,
+      userType: 'admin'
+    }
+    users.push(newUser)
+    localStorage.setItem('users', JSON.stringify(users))
+
+    setMessage('Account created successfully! Returning to login...')
+    setTimeout(() => {
+      setSignupData({ username: '', email: '', password: '' })
+      setShowSignup(false)
+      setMessage('')
+    }, 2000)
+  }
+
   const handleCreateAccount = () => {
+    setMessage('')
     setShowSignup(true)
   }
 
   const handleBackToLogin = () => {
+    setMessage('')
     setShowSignup(false)
   }
 
@@ -41,6 +126,8 @@ export default function LoginAdmin() {
         {!showSignup ? (
           <div className="login-box">
             <h1 className="login-title">Login as Admin:</h1>
+            
+            {message && <div className="message-box error">{message}</div>}
             
             <div className="form-group">
               <label className="form-label">Username</label>
@@ -72,13 +159,15 @@ export default function LoginAdmin() {
 
             <a href="#" className="forgot-password">Forgot Password</a>
 
-            <button className="login-btn">Login</button>
+            <button className="login-btn" onClick={handleLogin}>Login</button>
 
             <button className="create-account" onClick={handleCreateAccount}>Create Account</button>
           </div>
         ) : (
           <div className="login-box signup-box">
             <h1 className="login-title">Create Account</h1>
+            
+            {message && <div className={`message-box ${message.includes('successfully') ? 'success' : 'error'}`}>{message}</div>}
             
             <div className="form-group">
               <label className="form-label">Username</label>
@@ -123,7 +212,7 @@ export default function LoginAdmin() {
             </div>
 
             <div className="button-group">
-              <button className="signup-btn sign-up-btn">SIGN UP</button>
+              <button className="signup-btn sign-up-btn" onClick={handleSignup}>SIGN UP</button>
               <button className="signup-btn sign-in-btn" onClick={handleBackToLogin}>SIGN IN</button>
             </div>
           </div>
