@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: center;
   margin: 0;
-  padding: 0;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-container {
@@ -14,6 +15,22 @@
   flex-direction: column;
   align-items: center;
   gap: 30px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo-container img {
+  max-width: 150px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .login-title {
@@ -21,23 +38,24 @@
   font-weight: 700;
   color: #000;
   margin: 0;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-box {
-  background: #fff;
-  border-radius: 12px;
-  padding: 50px 80px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.98);\n  border-radius: 12px;
+  padding: 40px 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  min-width: 400px;
+  width: 100%;
+  min-width: unset;
 }
 
 .login-label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #000;
   margin: 0 0 10px 0;
@@ -45,7 +63,7 @@
 
 .login-btn {
   width: 100%;
-  padding: 14px 30px;
+  padding: 13px 30px;
   font-size: 16px;
   font-weight: 600;
   border: none;
@@ -54,15 +72,17 @@
   transition: all 0.3s ease;
   color: #fff;
   background: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .login-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .admin-btn {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .user-btn {
@@ -72,17 +92,66 @@
 .or-text {
   font-size: 14px;
   color: #666;
-  margin: 15px 0;
+  margin: 10px 0;
   font-weight: 500;
 }
 
 @media (max-width: 768px) {
+  .login-page {
+    padding: 15px;
+  }
+
+  .login-container {
+    max-width: 100%;
+  }
+
+  .logo-container img {
+    max-width: 120px;
+  }
+  
   .login-box {
-    min-width: 300px;
-    padding: 40px 60px;
+    padding: 30px 20px;
   }
   
   .login-title {
     font-size: 28px;
   }
+
+  .login-label {
+    font-size: 16px;
+  }
 }
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 10px;
+  }
+
+  .login-container {
+    gap: 20px;
+  }
+
+  .logo-container img {
+    max-width: 100px;
+  }
+  
+  .login-box {
+    padding: 25px 15px;
+    gap: 15px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+
+  .login-label {
+    font-size: 14px;
+  }
+
+  .login-btn {
+    padding: 11px 20px;
+    font-size: 14px;
+  }
+
+  .or-text {
+    font-size: 12px;

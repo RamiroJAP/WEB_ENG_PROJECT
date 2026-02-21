@@ -1,6 +1,6 @@
 .about-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #0a0a0a 100%);
   padding: 40px 20px;
 }
 
@@ -14,14 +14,15 @@
 }
 
 .about-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #18181a 0%, #8b898d 100%);
+  color: rgb(199, 199, 199);
   padding: 60px 40px;
   text-align: center;
 }
 
 .about-title {
   font-size: 42px;
+  color: rgb(202, 201, 201);
   font-weight: 700;
   margin: 0 0 15px 0;
 }
@@ -79,7 +80,7 @@
   content: "✓";
   position: absolute;
   left: 0;
-  color: #667eea;
+  color: #1c1d1f;
   font-weight: bold;
   font-size: 18px;
 }
@@ -95,7 +96,7 @@
   background: #f9f9f9;
   padding: 25px;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #222224;
   text-align: center;
 }
 

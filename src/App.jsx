@@ -2,6 +2,7 @@ import React from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import Homepage from './pages/homepage/Homepage'
+import Shop from './pages/shop/Shop'
 import About from './pages/about/About'
 import Dashboard from './pages/dashboard/Dashboard'
 import CustomerHome from './pages/customer/CustomerHome'
@@ -25,6 +26,7 @@ export default function App() {
         <div className="brand">Wolves Footwear Store</div>
         <nav>
           <Link to="/">Home</Link>
+          <Link to="/shop">Shop</Link>
           <Link to="/about">About</Link>
           {!user && <Link to="/login">Login</Link>}
           {user && user.userType === 'admin' && (
@@ -38,6 +40,7 @@ export default function App() {
       <main className="container">
         <Routes>
           <Route path="/" element={<Homepage />} />
+          <Route path="/shop" element={<Shop />} />
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<LoginAdmin />} />
