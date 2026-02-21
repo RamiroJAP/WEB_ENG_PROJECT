@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './AdminDashboard.css'
+import '../../styles/admin/AdminDashboard.css'
 
 export default function AdminDashboard(){
   const [products, setProducts] = useState([

@@ -1,0 +1,45 @@
+/* Color Scheme - Based on About Page Design */
+:root {
+  /* Primary Colors */
+  --primary-dark: #18181a;
+  --primary-darker: #1c1d1f;
+  --primary-gray: #8b898d;
+  --primary-light: #222224;
+
+  /* Text Colors */
+  --text-dark: #333;
+  --text-medium: #666;
+  --text-light: #555;
+  --text-lightest: rgb(202, 201, 201);
+  --text-white: #fff;
+
+  /* Background Colors */
+  --bg-light: #f5f7fa;
+  --bg-lighter: #f9f9f9;
+  --bg-white: #fff;
+  --bg-dark: #0a0a0a;
+
+  /* Border Colors */
+  --border-light: #eee;
+  --border-medium: #e0e0e0;
+
+  /* Accent Colors */
+  --accent-primary: #ff6b35;
+  --accent-dark: #ff5722;
+
+  /* Design Tokens */
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 40px;
+
+  --transition-default: 0.3s;
+}

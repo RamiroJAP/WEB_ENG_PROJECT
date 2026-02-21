@@ -1,4 +1,5 @@
 import React from 'react'
+import '../../styles/user/Homepage.css'
 
 export default function Homepage() {
   const products = [
