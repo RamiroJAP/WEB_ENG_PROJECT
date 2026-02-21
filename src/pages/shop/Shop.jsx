@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Shop.css'
+import '../../styles/user/Shop.css'
 
 export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -123,99 +123,79 @@ export default function Shop() {
       </section>
 
       <div className="shop-container">
-        <aside className="shop-filters">
-          <div className="filter-section">
-            <h3 className="filter-title">Category</h3>
-            <ul className="filter-list">
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('all')}
-                >
-                  All Products
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'running' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('running')}
-                >
-                  Running
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'casual' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('casual')}
-                >
-                  Casual
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'basketball' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('basketball')}
-                >
-                  Basketball
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'training' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('training')}
-                >
-                  Training
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedCategory === 'formal' ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory('formal')}
-                >
-                  Formal
-                </button>
-              </li>
-            </ul>
+        <div className="shop-filters-top">
+          <div className="filter-group-inline">
+            <h4 className="filter-label">Category:</h4>
+            <div className="filter-buttons">
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'all' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('all')}
+              >
+                All Products
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'running' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('running')}
+              >
+                Running
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'casual' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('casual')}
+              >
+                Casual
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'basketball' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('basketball')}
+              >
+                Basketball
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'training' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('training')}
+              >
+                Training
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedCategory === 'formal' ? 'active' : ''}`}
+                onClick={() => setSelectedCategory('formal')}
+              >
+                Formal
+              </button>
+            </div>
           </div>
 
-          <div className="filter-section">
-            <h3 className="filter-title">Price Range</h3>
-            <ul className="filter-list">
-              <li>
-                <button 
-                  className={`filter-btn ${selectedPrice === 'all' ? 'active' : ''}`}
-                  onClick={() => setSelectedPrice('all')}
-                >
-                  All Prices
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedPrice === 'budget' ? 'active' : ''}`}
-                  onClick={() => setSelectedPrice('budget')}
-                >
-                  Up to ₱3,500
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedPrice === 'mid' ? 'active' : ''}`}
-                  onClick={() => setSelectedPrice('mid')}
-                >
-                  ₱3,500 - ₱4,500
-                </button>
-              </li>
-              <li>
-                <button 
-                  className={`filter-btn ${selectedPrice === 'premium' ? 'active' : ''}`}
-                  onClick={() => setSelectedPrice('premium')}
-                >
-                  Above ₱4,500
-                </button>
-              </li>
-            </ul>
+          <div className="filter-group-inline">
+            <h4 className="filter-label">Price:</h4>
+            <div className="filter-buttons">
+              <button 
+                className={`filter-btn-small ${selectedPrice === 'all' ? 'active' : ''}`}
+                onClick={() => setSelectedPrice('all')}
+              >
+                All Prices
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedPrice === 'budget' ? 'active' : ''}`}
+                onClick={() => setSelectedPrice('budget')}
+              >
+                Up to ₱3,500
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedPrice === 'mid' ? 'active' : ''}`}
+                onClick={() => setSelectedPrice('mid')}
+              >
+                ₱3,500 - ₱4,500
+              </button>
+              <button 
+                className={`filter-btn-small ${selectedPrice === 'premium' ? 'active' : ''}`}
+                onClick={() => setSelectedPrice('premium')}
+              >
+                Above ₱4,500
+              </button>
+            </div>
           </div>
-        </aside>
+        </div>
 
         <main className="shop-products">
           <div className="products-header">

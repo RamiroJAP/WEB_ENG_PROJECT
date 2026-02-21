@@ -1,4 +1,5 @@
 import React from 'react'
+import '../../styles/user/CustomerHome.css'
 
 export default function CustomerHome() {
   return (

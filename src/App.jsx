@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import './styles/globals.css'
 import Homepage from './pages/homepage/Homepage'
 import Shop from './pages/shop/Shop'
 import About from './pages/about/About'
