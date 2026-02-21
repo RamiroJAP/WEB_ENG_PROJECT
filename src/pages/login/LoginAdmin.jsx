@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import './LoginForm.css'
 
 export default function LoginAdmin() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
   const [showSignup, setShowSignup] = useState(false)
   const [message, setMessage] = useState('')
   const [loginData, setLoginData] = useState({
@@ -34,8 +38,30 @@ export default function LoginAdmin() {
       setMessage('Please fill in all fields')
       return
     }
-    setMessage('Login successful! (Demo)')
-    setLoginData({ username: '', password: '' })
+    
+    // Check if user exists
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const foundUser = users.find(u => 
+      (u.username === loginData.username || u.email === loginData.username) && 
+      u.password === loginData.password &&
+      u.userType === 'admin'
+    )
+
+    if (foundUser) {
+      login({
+        id: foundUser.id,
+        username: foundUser.username,
+        email: foundUser.email,
+        userType: 'admin'
+      })
+      setMessage('Login successful! Redirecting...')
+      setLoginData({ username: '', password: '' })
+      setTimeout(() => {
+        navigate('/admin')
+      }, 1500)
+    } else {
+      setMessage('Invalid username or password')
+    }
   }
 
   const handleSignup = (e) => {
