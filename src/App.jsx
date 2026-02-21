@@ -24,7 +24,7 @@ export default function App() {
         <div className="brand">ShoeStore</div>
         <nav>
           <Link to="/">Home</Link>
-          <Link to="/login">Login</Link>
+          {!user && <Link to="/login">Login</Link>}
           <Link to="/customer">Customer</Link>
           {user && user.userType === 'admin' && (
             <Link to="/admin">Admin</Link>
