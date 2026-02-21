@@ -1,0 +1,22 @@
+:root{--accent:#ff6b35;--muted:#f4f4f6}
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--muted);color:#222}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:#fff;border-bottom:1px solid #eee}
+.topbar .brand{font-weight:700;color:var(--accent)}
+.topbar nav{display:flex;align-items:center;gap:12px}
+.topbar nav a{text-decoration:none;color:#333;transition:color 0.2s}
+.topbar nav a:hover{color:var(--accent)}
+.logout-btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;text-decoration:none;font-weight:500;transition:background 0.2s}
+.logout-btn:hover{background:#ff5722}
+.container{padding:24px}
+.card{background:#fff;border-radius:8px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.product{padding:12px;border:1px dashed #eee;border-radius:6px;text-align:center}
+.product-image{height:100px;background:#fafafa;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.product-price{margin-top:8px}
+.product-action{margin-top:10px}
+.customer-actions{display:flex;gap:8px}
+.btn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:6px;text-decoration:none}
+.footer{padding:12px 20px;text-align:center;color:#666}
+.message{background:#d4edda;color:#155724;padding:10px;border-radius:6px;margin-bottom:16px;border:1px solid #c3e6cb}
+
