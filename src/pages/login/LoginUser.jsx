@@ -14,8 +14,8 @@ export default function LoginUser() {
   })
   const [signupData, setSignupData] = useState({
     username: '',
-    email: '',
-    password: ''
+    password: '',
+    email: ''
   })
 
   const handleLoginChange = (e) => {
@@ -68,7 +68,7 @@ export default function LoginUser() {
     e.preventDefault()
     setMessage('')
 
-    if (!signupData.username || !signupData.email || !signupData.password) {
+    if (!signupData.username || !signupData.password || !signupData.email) {
       setMessage('Please fill in all fields')
       return
     }
@@ -84,6 +84,11 @@ export default function LoginUser() {
     }
 
     const users = JSON.parse(localStorage.getItem('users') || '[]')
+    if (users.find(u => u.username === signupData.username)) {
+      setMessage('Username already exists')
+      return
+    }
+
     if (users.find(u => u.email === signupData.email)) {
       setMessage('Email already exists')
       return
@@ -92,15 +97,15 @@ export default function LoginUser() {
     const newUser = {
       id: Date.now(),
       username: signupData.username,
-      email: signupData.email,
       password: signupData.password,
+      email: signupData.email,
       userType: 'user'
     }
 
     users.push(newUser)
     localStorage.setItem('users', JSON.stringify(users))
     setMessage('Account created! Logging you in...')
-    setSignupData({ username: '', email: '', password: '' })
+    setSignupData({ username: '', password: '', email: '' })
     
     setTimeout(() => {
       login({
@@ -190,20 +195,6 @@ export default function LoginUser() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Email</label>
-                <div className="input-wrapper">
-                  <span className="input-icon">✉️</span>
-                  <input 
-                    type="email" 
-                    name="email"
-                    value={signupData.email}
-                    onChange={handleSignupChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
                 <label className="form-label">Password</label>
                 <div className="input-wrapper">
                   <span className="input-icon">🔒</span>
@@ -211,6 +202,20 @@ export default function LoginUser() {
                     type="password" 
                     name="password"
                     value={signupData.password}
+                    onChange={handleSignupChange}
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Email</label>
+                <div className="input-wrapper">
+                  <span className="input-icon">✉️</span>
+                  <input 
+                    type="email" 
+                    name="email"
+                    value={signupData.email}
                     onChange={handleSignupChange}
                     className="form-input"
                   />
