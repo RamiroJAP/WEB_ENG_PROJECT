@@ -4,6 +4,10 @@ import Homepage from './pages/homepage/Homepage'
 import Dashboard from './pages/dashboard/Dashboard'
 import CustomerHome from './pages/customer/CustomerHome'
 import SellerDashboard from './pages/seller/SellerDashboard'
+import Login from './pages/login/Login'
+import LoginAdmin from './pages/login/LoginAdmin'
+import LoginUser from './pages/login/LoginUser'
+import Signup from './pages/login/Signup'
 
 export default function App() {
   return (
@@ -12,6 +16,7 @@ export default function App() {
         <div className="brand">ShoeStore</div>
         <nav>
           <Link to="/">Home</Link>
+          <Link to="/login">Login</Link>
           <Link to="/customer">Customer</Link>
           <Link to="/seller">Seller</Link>
           <Link to="/dashboard">Dashboard</Link>
@@ -20,6 +25,10 @@ export default function App() {
       <main className="container">
         <Routes>
           <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/admin" element={<LoginAdmin />} />
+          <Route path="/login/user" element={<LoginUser />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/customer" element={<CustomerHome />} />
           <Route path="/seller" element={<SellerDashboard />} />

@@ -9,7 +9,7 @@ export default function Homepage(){
   ]
   return (
     <div>
-      <h1>Welcome to ShoeStore</h1>
+      <h1>Welcome to Wolves Footwear</h1>
       <p className="card">Find your perfect pair — curated selection, fast checkout.</p>
       <h2>Featured</h2>
       <div className="grid">
