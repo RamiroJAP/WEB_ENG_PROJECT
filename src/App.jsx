@@ -8,7 +8,6 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import Login from './pages/login/Login'
 import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
-import Signup from './pages/login/Signup'
 
 export default function App() {
   const { user, logout } = useAuth()
@@ -42,7 +41,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<LoginAdmin />} />
           <Route path="/login/user" element={<LoginUser />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/customer" element={<CustomerHome />} />
           <Route path="/admin" element={<AdminDashboard />} />
