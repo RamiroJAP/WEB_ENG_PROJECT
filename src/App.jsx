@@ -21,7 +21,7 @@ export default function App() {
   return (
     <>
       <header className="topbar">
-        <div className="brand">ShoeStore</div>
+        <div className="brand">Wolves Footwear Store</div>
         <nav>
           <Link to="/">Home</Link>
           {!user && <Link to="/login">Login</Link>}
@@ -46,7 +46,7 @@ export default function App() {
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
-      <footer className="footer">© ShoeStore</footer>
+      <footer className="footer">© Wolves Footwear Store</footer>
     </>
   )
 }
