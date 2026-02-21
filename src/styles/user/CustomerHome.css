@@ -1,18 +1,24 @@
-/* Customer Home User Styles */
+/* User Home Styles */
 @import '../variables.css';
 
-.customer-home {
+.user-page {
   min-height: 100vh;
   background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-dark) 100%);
   padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.customer-container {
+.user-home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-dark) 100%);
+  padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.user-container {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.customer-header {
+.user-header {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-gray) 100%);
   color: var(--text-lightest);
   padding: 60px var(--spacing-xl);
@@ -22,14 +28,14 @@
   text-align: center;
 }
 
-.customer-greeting {
+.user-greeting {
   font-size: 36px;
   color: var(--text-lightest);
   font-weight: 700;
   margin: 0 0 12px 0;
 }
 
-.customer-tagline {
+.user-tagline {
   font-size: 16px;
   font-weight: 300;
   margin: 0;
@@ -242,15 +248,15 @@
 }
 
 @media (max-width: 768px) {
-  .customer-home {
+  .user-home {
     padding: var(--spacing-lg);
   }
 
-  .customer-header {
+  .user-header {
     padding: 40px var(--spacing-lg);
   }
 
-  .customer-greeting {
+  .user-greeting {
     font-size: 26px;
   }
 

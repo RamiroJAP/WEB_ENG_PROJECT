@@ -59,7 +59,7 @@ export default function LoginUser() {
       setMessage('Login successful! Redirecting...')
       setLoginData({ username: '', password: '' })
       setTimeout(() => {
-        navigate('/customer')
+        navigate('/')
       }, 1500)
     } else {
       alert('Invalid username or password')
@@ -123,7 +123,7 @@ export default function LoginUser() {
         email: newUser.email,
         userType: 'user'
       })
-      navigate('/customer')
+      navigate('/')
     }, 1500)
   }
 

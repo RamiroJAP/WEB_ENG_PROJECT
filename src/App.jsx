@@ -6,7 +6,6 @@ import Homepage from './pages/homepage/Homepage'
 import Shop from './pages/shop/Shop'
 import About from './pages/about/About'
 import Dashboard from './pages/dashboard/Dashboard'
-import CustomerHome from './pages/customer/CustomerHome'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import Login from './pages/login/Login'
 import LoginAdmin from './pages/login/LoginAdmin'
@@ -47,7 +46,6 @@ export default function App() {
           <Route path="/login/admin" element={<LoginAdmin />} />
           <Route path="/login/user" element={<LoginUser />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/customer" element={<CustomerHome />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>
