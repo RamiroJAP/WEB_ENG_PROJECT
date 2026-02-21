@@ -35,6 +35,7 @@ export default function LoginAdmin() {
   const handleLogin = (e) => {
     e.preventDefault()
     if (!loginData.username || !loginData.password) {
+      alert('Please fill in all fields')
       setMessage('Please fill in all fields')
       return
     }
@@ -48,6 +49,7 @@ export default function LoginAdmin() {
     )
 
     if (foundUser) {
+      alert('Login successful! Welcome admin!')
       login({
         id: foundUser.id,
         username: foundUser.username,
@@ -60,6 +62,7 @@ export default function LoginAdmin() {
         navigate('/admin')
       }, 1500)
     } else {
+      alert('Invalid username or password')
       setMessage('Invalid username or password')
     }
   }
@@ -69,27 +72,32 @@ export default function LoginAdmin() {
     setMessage('')
 
     if (!signupData.username || !signupData.password || !signupData.email) {
+      alert('Please fill in all fields')
       setMessage('Please fill in all fields')
       return
     }
 
     if (signupData.password.length < 6) {
+      alert('Password must be at least 6 characters')
       setMessage('Password must be at least 6 characters')
       return
     }
 
     if (!signupData.email.includes('@')) {
+      alert('Please enter a valid email')
       setMessage('Please enter a valid email')
       return
     }
 
     const users = JSON.parse(localStorage.getItem('users') || '[]')
     if (users.find(u => u.username === signupData.username)) {
+      alert('Username already exists')
       setMessage('Username already exists')
       return
     }
 
     if (users.find(u => u.email === signupData.email)) {
+      alert('Email already exists')
       setMessage('Email already exists')
       return
     }
@@ -103,7 +111,7 @@ export default function LoginAdmin() {
     }
     users.push(newUser)
     localStorage.setItem('users', JSON.stringify(users))
-
+    alert('Admin account created successfully!')
     setMessage('Account created successfully! Returning to login...')
     setTimeout(() => {
       setSignupData({ username: '', password: '', email: '' })
