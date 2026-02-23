@@ -3,37 +3,60 @@ import '../../styles/admin/AdminDashboard.css'
 
 export default function AdminDashboard(){
   const [products, setProducts] = useState([
-    { id: 1, name: 'Golden Runner', category: 'Men', image: '👟' },
-    { id: 2, name: 'Black Max', category: 'Men', image: '👟' },
-    { id: 3, name: 'Jordan Low', category: 'Men', image: '👟' },
-    { id: 4, name: 'Purple Sneaker', category: 'Best Seller', image: '👟' },
-    { id: 5, name: 'White Slides', category: 'Kids', image: '👟' },
-    { id: 6, name: 'Beige Slides', category: 'Women', image: '👟' },
-    { id: 7, name: 'Black Slides', category: 'Kids', image: '👟' },
-    { id: 8, name: 'Cream Slides', category: 'Women', image: '👟' }
+    { id: 1, name: 'Golden Runner', category: 'Men', subcategory: 'SHOES', image: '👟' },
+    { id: 2, name: 'Black Max', category: 'Men', subcategory: 'SHOES', image: '👟' },
+    { id: 3, name: 'Jordan Low', category: 'Men', subcategory: 'SHOES', image: '👟' },
+    { id: 4, name: 'Purple Sneaker', category: 'Best Seller', subcategory: 'SHOES', image: '👟' },
+    { id: 5, name: 'White Slides', category: 'Kids', subcategory: 'SLIPPERS', image: '👟' },
+    { id: 6, name: 'Beige Slides', category: 'Women', subcategory: 'SLIPPERS', image: '👟' },
+    { id: 7, name: 'Black Slides', category: 'Kids', subcategory: 'SLIPPERS', image: '👟' },
+    { id: 8, name: 'Cream Slides', category: 'Women', subcategory: 'SLIPPERS', image: '👟' }
   ])
 
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null)
+  const [openDropdown, setOpenDropdown] = useState(null)
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
     color: '#FF0000',
-    size: ''
+    size: '',
+    subcategory: 'SHOES'
   })
 
   const categories = ['All', 'Kids', 'Men', 'Women', 'Best Seller', 'About']
+  const dropdownCategories = ['Kids', 'Men', 'Women']
 
   const filteredProducts = selectedCategory === 'All' 
     ? products 
-    : products.filter(p => p.category === selectedCategory)
+    : selectedSubcategory 
+      ? products.filter(p => p.category === selectedCategory && p.subcategory === selectedSubcategory)
+      : products.filter(p => p.category === selectedCategory)
 
   const handleAddProductClick = () => {
     setShowAddProductModal(true)
   }
 
+  const handleCategoryClick = (cat) => {
+    if (dropdownCategories.includes(cat)) {
+      setOpenDropdown(openDropdown === cat ? null : cat)
+      setSelectedCategory(cat)
+      setSelectedSubcategory(null)
+    } else {
+      setSelectedCategory(cat)
+      setSelectedSubcategory(null)
+      setOpenDropdown(null)
+    }
+  }
+
+  const handleSubcategoryClick = (subcategory) => {
+    setSelectedSubcategory(subcategory)
+    setOpenDropdown(null)
+  }
+
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', color: '#FF0000', size: '' })
+    setNewProduct({ name: '', color: '#FF0000', size: '', subcategory: 'SHOES' })
   }
 
   const handleInputChange = (e) => {
@@ -53,6 +76,7 @@ export default function AdminDashboard(){
         color: newProduct.color,
         size: newProduct.size,
         category: 'Men',
+        subcategory: newProduct.subcategory,
         image: '👟'
       }
       setProducts([...products, product])
@@ -73,14 +97,33 @@ export default function AdminDashboard(){
 
       <div className="categories">
         {categories.map(cat => (
-          <button 
-            key={cat}
-            className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat)}
-          >
-            {cat}
-            {cat !== 'All' && cat !== 'Best Seller' && cat !== 'About' && ' ▼'}
-          </button>
+          <div key={cat} className="category-wrapper">
+            <button 
+              className={`category-btn ${selectedCategory === cat && !openDropdown ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(cat)}
+            >
+              {cat}
+              {dropdownCategories.includes(cat) && (
+                <span className={`dropdown-arrow ${openDropdown === cat ? 'open' : ''}`}>▼</span>
+              )}
+            </button>
+            {dropdownCategories.includes(cat) && openDropdown === cat && (
+              <div className="dropdown-menu">
+                <button 
+                  className={`dropdown-item ${selectedSubcategory === 'SHOES' ? 'active' : ''}`}
+                  onClick={() => handleSubcategoryClick('SHOES')}
+                >
+                  SHOES
+                </button>
+                <button 
+                  className={`dropdown-item ${selectedSubcategory === 'SLIPPERS' ? 'active' : ''}`}
+                  onClick={() => handleSubcategoryClick('SLIPPERS')}
+                >
+                  SLIPPERS
+                </button>
+              </div>
+            )}
+          </div>
         ))}
       </div>
 
@@ -154,6 +197,24 @@ export default function AdminDashboard(){
                     onChange={handleInputChange}
                     className="form-input"
                   />
+                </div>
+
+                <div className="form-group">
+                  <label>PRODUCT TYPE:</label>
+                  <div className="subcategory-selector">
+                    <button 
+                      className={`subcategory-btn ${newProduct.subcategory === 'SHOES' ? 'active' : ''}`}
+                      onClick={() => setNewProduct({ ...newProduct, subcategory: 'SHOES' })}
+                    >
+                      SHOES
+                    </button>
+                    <button 
+                      className={`subcategory-btn ${newProduct.subcategory === 'SLIPPERS' ? 'active' : ''}`}
+                      onClick={() => setNewProduct({ ...newProduct, subcategory: 'SLIPPERS' })}
+                    >
+                      SLIPPERS
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
