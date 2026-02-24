@@ -1,30 +1,33 @@
 import React, { useState } from 'react'
+import { useCheckout } from '../../context/CheckoutContext'
+import ReceiptModal from './ReceiptModal'
 import '../../styles/admin/CheckoutList.css'
 
 export default function CheckoutList() {
-  const [checkouts, setCheckouts] = useState([
-    { id: 1, customer: 'John Doe', email: 'john@example.com', total: 5999, status: 'Pending', date: '2026-02-24' },
-    { id: 2, customer: 'Jane Smith', email: 'jane@example.com', total: 3500, status: 'Completed', date: '2026-02-23' },
-    { id: 3, customer: 'Mark Johnson', email: 'mark@example.com', total: 8999, status: 'Pending', date: '2026-02-22' },
-    { id: 4, customer: 'Sarah Williams', email: 'sarah@example.com', total: 4299, status: 'Shipped', date: '2026-02-21' },
-  ])
-
+  const { checkouts, updateCheckoutStatus, deleteCheckout } = useCheckout()
   const [filterStatus, setFilterStatus] = useState('All')
+  const [selectedCheckoutId, setSelectedCheckoutId] = useState(null)
 
   const filteredCheckouts = filterStatus === 'All' 
     ? checkouts 
     : checkouts.filter(c => c.status === filterStatus)
 
   const handleStatusChange = (id, newStatus) => {
-    setCheckouts(checkouts.map(c => 
-      c.id === id ? { ...c, status: newStatus } : c
-    ))
+    updateCheckoutStatus(id, newStatus)
   }
 
   const handleDeleteCheckout = (id) => {
     if (window.confirm('Are you sure you want to delete this checkout?')) {
-      setCheckouts(checkouts.filter(c => c.id !== id))
+      deleteCheckout(id)
     }
+  }
+
+  const handleViewReceipt = (id) => {
+    setSelectedCheckoutId(id)
+  }
+
+  const handleCloseReceipt = () => {
+    setSelectedCheckoutId(null)
   }
 
   return (
@@ -77,6 +80,12 @@ export default function CheckoutList() {
                 <td>{checkout.date}</td>
                 <td>
                   <button 
+                    className="view-receipt-btn"
+                    onClick={() => handleViewReceipt(checkout.id)}
+                  >
+                    View Receipt
+                  </button>
+                  <button 
                     className="delete-btn"
                     onClick={() => handleDeleteCheckout(checkout.id)}
                   >
@@ -96,6 +105,10 @@ export default function CheckoutList() {
         <p>Total Checkouts: <strong>{filteredCheckouts.length}</strong></p>
         <p>Total Revenue: <strong>₱{filteredCheckouts.reduce((sum, c) => sum + c.total, 0).toLocaleString()}</strong></p>
       </div>
+
+      {selectedCheckoutId && (
+        <ReceiptModal checkoutId={selectedCheckoutId} onClose={handleCloseReceipt} />
+      )}
     </div>
   )
 }

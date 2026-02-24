@@ -138,6 +138,22 @@
   background: #c82333;
 }
 
+.view-receipt-btn {
+  background: #18181a;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+  margin-right: 0.5rem;
+}
+
+.view-receipt-btn:hover {
+  background: #333;
+}
+
 .no-data {
   text-align: center;
   color: #999;

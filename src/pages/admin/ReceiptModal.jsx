@@ -1,38 +1,20 @@
-import React, { useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import React from 'react'
 import { useCheckout } from '../../context/CheckoutContext'
+import '../../styles/admin/ReceiptModal.css'
 
-export default function Receipt({ cart, total, onClose }) {
-  const { user } = useAuth()
-  const { addCheckout } = useCheckout()
-  const [sent, setSent] = useState(false)
+export default function ReceiptModal({ checkoutId, onClose }) {
+  const { getCheckoutById } = useCheckout()
+  const checkout = getCheckoutById(checkoutId)
 
-  const currentDate = new Date().toLocaleDateString('en-US', {
+  if (!checkout) {
+    return null
+  }
+
+  const currentDate = new Date(checkout.date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   })
-
-  const currentTime = new Date().toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  })
-
-  const receiptNumber = Math.random().toString(36).substr(2, 9).toUpperCase()
-
-  const handleSendToAdmin = () => {
-    if (user && user.username) {
-      addCheckout({
-        customer: user.username,
-        email: user.email || 'user@example.com',
-        total: total,
-        items: cart,
-        receiptNumber: receiptNumber
-      })
-      setSent(true)
-    }
-  }
 
   return (
     <div className="receipt-modal-overlay" onClick={onClose}>
@@ -51,15 +33,19 @@ export default function Receipt({ cart, total, onClose }) {
           <div className="receipt-info-section">
             <div className="receipt-info-row">
               <span className="receipt-label">Receipt #:</span>
-              <span className="receipt-value">{receiptNumber}</span>
+              <span className="receipt-value">{checkout.receiptNumber}</span>
+            </div>
+            <div className="receipt-info-row">
+              <span className="receipt-label">Customer:</span>
+              <span className="receipt-value">{checkout.customer}</span>
+            </div>
+            <div className="receipt-info-row">
+              <span className="receipt-label">Email:</span>
+              <span className="receipt-value">{checkout.email}</span>
             </div>
             <div className="receipt-info-row">
               <span className="receipt-label">Date:</span>
               <span className="receipt-value">{currentDate}</span>
-            </div>
-            <div className="receipt-info-row">
-              <span className="receipt-label">Time:</span>
-              <span className="receipt-value">{currentTime}</span>
             </div>
           </div>
 
@@ -77,7 +63,7 @@ export default function Receipt({ cart, total, onClose }) {
                 </tr>
               </thead>
               <tbody>
-                {cart.map((item) => (
+                {checkout.items && checkout.items.map((item) => (
                   <tr key={item.id}>
                     <td className="receipt-product-name">{item.name}</td>
                     <td className="receipt-td-center">{item.quantity}</td>
@@ -95,7 +81,7 @@ export default function Receipt({ cart, total, onClose }) {
           <div className="receipt-summary-section">
             <div className="receipt-summary-row">
               <span>Subtotal:</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>₹{checkout.total.toFixed(2)}</span>
             </div>
             <div className="receipt-summary-row">
               <span>Shipping:</span>
@@ -103,7 +89,7 @@ export default function Receipt({ cart, total, onClose }) {
             </div>
             <div className="receipt-summary-row receipt-total">
               <span>TOTAL AMOUNT:</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>₹{checkout.total.toFixed(2)}</span>
             </div>
           </div>
 
@@ -117,22 +103,7 @@ export default function Receipt({ cart, total, onClose }) {
           {/* Footer Info */}
           <div className="receipt-footer-section">
             <p className="receipt-footer-info">Wolves Footwear Store</p>
-            <p className="receipt-footer-info">support@wolvesfoot.com</p>
-            <p className="receipt-footer-info">© 2026 All Rights Reserved</p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="receipt-buttons">
-            <button 
-              className={`receipt-action-btn ${sent ? 'sent' : ''}`}
-              onClick={handleSendToAdmin}
-              disabled={sent}
-            >
-              {sent ? '✓ Sent to Admin' : 'Send to Admin'}
-            </button>
-            <button className="receipt-close-action-btn" onClick={onClose}>
-              Continue Shopping
-            </button>
+            <p className="receipt-footer-info">Thank you for shopping with us!</p>
           </div>
         </div>
       </div>
