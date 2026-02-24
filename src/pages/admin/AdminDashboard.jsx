@@ -98,63 +98,56 @@ export default function AdminDashboard(){
       {showAddProductModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Add New Product</h2>
-              <button className="modal-close" onClick={handleCloseModal}>✕</button>
+            <div className="add-picture-section">
+              <div className="add-picture-box">ADD PICTURE</div>
             </div>
 
-            <div className="modal-body">
-              <div className="picture-section">
-                <div className="add-picture-box">ADD PICTURE</div>
+            <div className="edit-section">
+              <h3>EDIT:</h3>
+
+              <div className="form-group">
+                <label>EDIT NAME:</label>
+                <input 
+                  type="text" 
+                  name="name"
+                  placeholder=""
+                  value={newProduct.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
               </div>
 
-              <div className="edit-section">
-                <h3>EDIT:</h3>
-
-                <div className="form-group">
-                  <label>EDIT NAME:</label>
-                  <input 
-                    type="text" 
-                    name="name"
-                    placeholder="Enter product name"
-                    value={newProduct.name}
-                    onChange={handleInputChange}
-                    className="form-input"
+              <div className="form-group">
+                <label>ADD COLOR:</label>
+                <div className="color-picker">
+                  <button 
+                    className={`color-btn ${newProduct.color === '#FF0000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#FF0000')}
+                    style={{ backgroundColor: '#FF0000' }}
+                  />
+                  <button 
+                    className={`color-btn ${newProduct.color === '#9B59B6' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#9B59B6')}
+                    style={{ backgroundColor: '#9B59B6' }}
+                  />
+                  <button 
+                    className={`color-btn ${newProduct.color === '#000000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#000000')}
+                    style={{ backgroundColor: '#000000' }}
                   />
                 </div>
+              </div>
 
-                <div className="form-group">
-                  <label>ADD COLOR:</label>
-                  <div className="color-picker">
-                    <button 
-                      className={`color-btn red ${newProduct.color === '#FF0000' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#FF0000')}
-                      style={{ backgroundColor: '#FF0000' }}
-                    />
-                    <button 
-                      className={`color-btn blue ${newProduct.color === '#0000FF' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#0000FF')}
-                      style={{ backgroundColor: '#0000FF' }}
-                    />
-                    <button 
-                      className={`color-btn black ${newProduct.color === '#000000' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#000000')}
-                      style={{ backgroundColor: '#000000' }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>ADD SIZE:</label>
-                  <input 
-                    type="text" 
-                    name="size"
-                    placeholder="Enter size (e.g., S, M, L, XL)"
-                    value={newProduct.size}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
-                </div>
+              <div className="form-group">
+                <label>ADD SIZE:</label>
+                <input 
+                  type="text" 
+                  name="size"
+                  placeholder=""
+                  value={newProduct.size}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
               </div>
             </div>
 
