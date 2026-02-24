@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import { useCart } from '../../context/CartContext'
 import '../../styles/user/Shop.css'
 
 export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedPrice, setSelectedPrice] = useState('all')
+  const [addedToCart, setAddedToCart] = useState(null)
+  const { addToCart } = useCart()
 
   // Sample product data
   const products = [
@@ -208,7 +211,16 @@ export default function Shop() {
                 <div key={product.id} className="product-card">
                   <div className="product-image-container">
                     <img src={product.image} alt={product.name} className="product-image" />
-                    <button className="product-quick-add">Quick Add</button>
+                    <button 
+                      className="product-quick-add"
+                      onClick={() => {
+                        addToCart(product)
+                        setAddedToCart(product.id)
+                        setTimeout(() => setAddedToCart(null), 2000)
+                      }}
+                    >
+                      {addedToCart === product.id ? '✓ Added!' : 'Add to Cart'}
+                    </button>
                   </div>
                   <div className="product-info">
                     <p className="product-category">{product.category.toUpperCase()}</p>
