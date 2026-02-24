@@ -1,19 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
+import Receipt from './Receipt'
 import './Cart.css'
 
 export default function Cart() {
   const navigate = useNavigate()
   const { cart, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart()
+  const [showReceipt, setShowReceipt] = useState(false)
 
   const handleCheckout = () => {
     if (cart.length === 0) {
       alert('Your cart is empty!')
       return
     }
-    alert(`Proceeding to checkout with total: ₹${getTotalPrice().toFixed(2)}`)
-    // TODO: Implement checkout functionality
+    setShowReceipt(true)
+  }
+
+  const handleReceiptClose = () => {
+    setShowReceipt(false)
+    clearCart()
+    navigate('/')
+  }
+
+  if (showReceipt) {
+    return <Receipt cart={cart} total={getTotalPrice()} onClose={handleReceiptClose} />
   }
 
   if (cart.length === 0) {
