@@ -1,9 +1,11 @@
 import React from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import './styles/globals.css'
 import Homepage from './pages/homepage/Homepage'
+import Shop from './pages/shop/Shop'
+import About from './pages/about/About'
 import Dashboard from './pages/dashboard/Dashboard'
-import CustomerHome from './pages/customer/CustomerHome'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import Login from './pages/login/Login'
 import LoginAdmin from './pages/login/LoginAdmin'
@@ -24,12 +26,12 @@ export default function App() {
         <div className="brand">Wolves Footwear Store</div>
         <nav>
           <Link to="/">Home</Link>
+          <Link to="/shop">Shop</Link>
+          <Link to="/about">About</Link>
           {!user && <Link to="/login">Login</Link>}
-          <Link to="/customer">Customer</Link>
           {user && user.userType === 'admin' && (
             <Link to="/admin">Admin</Link>
           )}
-          <Link to="/dashboard">Dashboard</Link>
           {user && (
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           )}
@@ -38,11 +40,12 @@ export default function App() {
       <main className="container">
         <Routes>
           <Route path="/" element={<Homepage />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<LoginAdmin />} />
           <Route path="/login/user" element={<LoginUser />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/customer" element={<CustomerHome />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </main>

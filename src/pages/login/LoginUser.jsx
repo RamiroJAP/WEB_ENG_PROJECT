@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import './LoginForm.css'
+import '../../styles/user/LoginUser.css'
 
 export default function LoginUser() {
   const navigate = useNavigate()
@@ -59,7 +59,7 @@ export default function LoginUser() {
       setMessage('Login successful! Redirecting...')
       setLoginData({ username: '', password: '' })
       setTimeout(() => {
-        navigate('/customer')
+        navigate('/')
       }, 1500)
     } else {
       alert('Invalid username or password')
@@ -123,7 +123,7 @@ export default function LoginUser() {
         email: newUser.email,
         userType: 'user'
       })
-      navigate('/customer')
+      navigate('/')
     }, 1500)
   }
 
@@ -140,6 +140,10 @@ export default function LoginUser() {
   return (
     <div className="login-page">
       <div className="login-container">
+        <div className="logo-container">
+          <img src="/web-wolves.png" alt="Wolves Footwear Logo" />
+        </div>
+
         {!showSignup ? (
           <div className="login-box">
             <h1 className="login-title">Login as User:</h1>

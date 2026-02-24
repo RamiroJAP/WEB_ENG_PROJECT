@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import './AdminDashboard.css'
+import React, { useState, useRef } from 'react'
+import '../../styles/admin/AdminDashboard.css'
 
 export default function AdminDashboard(){
   const [products, setProducts] = useState([
@@ -18,8 +18,11 @@ export default function AdminDashboard(){
   const [newProduct, setNewProduct] = useState({
     name: '',
     color: '#FF0000',
-    size: ''
+    size: '',
+    image: null
   })
+  const [dragActive, setDragActive] = useState(false)
+  const fileInputRef = useRef(null)
 
   const categories = ['All', 'Kids', 'Men', 'Women', 'Best Seller', 'About']
 
@@ -33,7 +36,8 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', color: '#FF0000', size: '' })
+    setNewProduct({ name: '', color: '#FF0000', size: '', image: null })
+    setDragActive(false)
   }
 
   const handleInputChange = (e) => {
@@ -45,6 +49,46 @@ export default function AdminDashboard(){
     setNewProduct({ ...newProduct, color })
   }
 
+  const handleFileSelect = (e) => {
+    const files = e.target.files
+    if (files && files[0]) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setNewProduct({ ...newProduct, image: event.target.result })
+      }
+      reader.readAsDataURL(files[0])
+    }
+  }
+
+  const handleDrag = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true)
+    } else if (e.type === 'dragleave') {
+      setDragActive(false)
+    }
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files[0]) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setNewProduct({ ...newProduct, image: event.target.result })
+      }
+      reader.readAsDataURL(files[0])
+    }
+  }
+
+  const handlePictureBoxClick = () => {
+    fileInputRef.current?.click()
+  }
+
   const handleSaveProduct = () => {
     if (newProduct.name && newProduct.size) {
       const product = {
@@ -53,7 +97,7 @@ export default function AdminDashboard(){
         color: newProduct.color,
         size: newProduct.size,
         category: 'Men',
-        image: '👟'
+        image: newProduct.image || '👟'
       }
       setProducts([...products, product])
       handleCloseModal()
@@ -98,63 +142,79 @@ export default function AdminDashboard(){
       {showAddProductModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>Add New Product</h2>
-              <button className="modal-close" onClick={handleCloseModal}>✕</button>
+            <div className="add-picture-section">
+              <div 
+                className={`add-picture-box ${dragActive ? 'drag-active' : ''}`}
+                onClick={handlePictureBoxClick}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+              >
+                {newProduct.image ? (
+                  <img src={newProduct.image} alt="Product preview" className="picture-preview" />
+                ) : (
+                  <>
+                    <div className="upload-icon">➕</div>
+                    <div className="upload-text">Drag or Click to Add Picture</div>
+                  </>
+                )}
+              </div>
+              <input 
+                ref={fileInputRef}
+                type="file" 
+                accept="image/*"
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+              />
             </div>
 
-            <div className="modal-body">
-              <div className="picture-section">
-                <div className="add-picture-box">ADD PICTURE</div>
+            <div className="edit-section">
+              <h3>EDIT:</h3>
+
+              <div className="form-group">
+                <label>EDIT NAME:</label>
+                <input 
+                  type="text" 
+                  name="name"
+                  placeholder=""
+                  value={newProduct.name}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
               </div>
 
-              <div className="edit-section">
-                <h3>EDIT:</h3>
-
-                <div className="form-group">
-                  <label>EDIT NAME:</label>
-                  <input 
-                    type="text" 
-                    name="name"
-                    placeholder="Enter product name"
-                    value={newProduct.name}
-                    onChange={handleInputChange}
-                    className="form-input"
+              <div className="form-group">
+                <label>ADD COLOR:</label>
+                <div className="color-picker">
+                  <button 
+                    className={`color-btn ${newProduct.color === '#FF0000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#FF0000')}
+                    style={{ backgroundColor: '#FF0000' }}
+                  />
+                  <button 
+                    className={`color-btn ${newProduct.color === '#9B59B6' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#9B59B6')}
+                    style={{ backgroundColor: '#9B59B6' }}
+                  />
+                  <button 
+                    className={`color-btn ${newProduct.color === '#000000' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#000000')}
+                    style={{ backgroundColor: '#000000' }}
                   />
                 </div>
+              </div>
 
-                <div className="form-group">
-                  <label>ADD COLOR:</label>
-                  <div className="color-picker">
-                    <button 
-                      className={`color-btn red ${newProduct.color === '#FF0000' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#FF0000')}
-                      style={{ backgroundColor: '#FF0000' }}
-                    />
-                    <button 
-                      className={`color-btn blue ${newProduct.color === '#0000FF' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#0000FF')}
-                      style={{ backgroundColor: '#0000FF' }}
-                    />
-                    <button 
-                      className={`color-btn black ${newProduct.color === '#000000' ? 'active' : ''}`}
-                      onClick={() => handleColorChange('#000000')}
-                      style={{ backgroundColor: '#000000' }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label>ADD SIZE:</label>
-                  <input 
-                    type="text" 
-                    name="size"
-                    placeholder="Enter size (e.g., S, M, L, XL)"
-                    value={newProduct.size}
-                    onChange={handleInputChange}
-                    className="form-input"
-                  />
-                </div>
+              <div className="form-group">
+                <label>ADD SIZE:</label>
+                <input 
+                  type="text" 
+                  name="size"
+                  placeholder=""
+                  value={newProduct.size}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
               </div>
             </div>
 
