@@ -1,0 +1,188 @@
+.checkout-list-container {
+  padding: 2rem;
+  background: white;
+  border-radius: 8px;
+  margin: 2rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.checkout-list-container h1 {
+  color: #333;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+  border-bottom: 2px solid #8b898d;
+  padding-bottom: 1rem;
+}
+
+.filter-section {
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.filter-section label {
+  font-weight: bold;
+  color: #333;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.filter-section select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #8b898d;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  min-width: 150px;
+  transition: all 0.3s ease;
+}
+
+.filter-section select:hover {
+  border-color: #8b898d;
+  box-shadow: 0 0 4px rgba(139, 137, 141, 0.25);
+}
+
+.checkouts-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.checkouts-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.checkouts-table thead {
+  background: #18181a;
+  color: white;
+}
+
+.checkouts-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: bold;
+  border: 1px solid #dee2e6;
+  color: white;
+}
+
+.checkouts-table td {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  color: #333;
+  background: white;
+}
+
+.checkouts-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.checkouts-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.status-select {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.status-select.status-pending {
+  background: #fff3cd;
+  border-color: #ffc107;
+  color: #856404;
+}
+
+.status-select.status-completed {
+  background: #d4edda;
+  border-color: #28a745;
+  color: #155724;
+}
+
+.status-select.status-shipped {
+  background: #d1ecf1;
+  border-color: #17a2b8;
+  color: #0c5460;
+}
+
+.status-select.status-cancelled {
+  background: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.summary {
+  background: linear-gradient(135deg, #18181a 0%, #8b898d 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  gap: 3rem;
+  box-shadow: 0 2px 8px rgba(24, 24, 26, 0.3);
+  margin-top: 2rem;
+}
+
+.summary p {
+  margin: 0;
+  font-size: 1rem;
+  color: white;
+}
+
+.summary strong {
+  color: #ffde59;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .checkouts-table {
+    overflow-x: auto;
+  }
+
+  .checkouts-table table {
+    min-width: 600px;
+  }
+
+  .summary {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .filter-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
