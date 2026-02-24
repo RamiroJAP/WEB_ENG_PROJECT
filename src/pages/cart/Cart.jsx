@@ -79,10 +79,6 @@ export default function Cart() {
             <span>Subtotal:</span>
             <span>₹{getTotalPrice().toFixed(2)}</span>
           </div>
-          <div className="summary-row">
-            <span>Shipping:</span>
-            <span>Free</span>
-          </div>
           <div className="summary-row total">
             <span>Total:</span>
             <span>₹{getTotalPrice().toFixed(2)}</span>
