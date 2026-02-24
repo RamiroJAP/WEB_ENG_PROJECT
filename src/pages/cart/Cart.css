@@ -466,7 +466,34 @@
 .receipt-action-btn {
   width: 100%;
   padding: 14px;
-  margin-top: 20px;
+  margin-top: 15px;
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.receipt-action-btn:hover:not(:disabled) {
+  background: #e85a25;
+}
+
+.receipt-action-btn:disabled {
+  background: #28a745;
+  cursor: default;
+}
+
+.receipt-action-btn.sent {
+  background: #28a745;
+}
+
+.receipt-close-action-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
   background: #1a1a1a;
   color: white;
   border: none;
@@ -477,8 +504,12 @@
   transition: background 0.3s ease;
 }
 
-.receipt-action-btn:hover {
+.receipt-close-action-btn:hover {
   background: #333;
+}
+
+.receipt-buttons {
+  margin-top: 20px;
 }
 
 @media (max-width: 600px) {

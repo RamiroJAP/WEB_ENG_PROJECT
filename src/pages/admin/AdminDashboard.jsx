@@ -155,7 +155,7 @@ export default function AdminDashboard(){
                   <img src={newProduct.image} alt="Product preview" className="picture-preview" />
                 ) : (
                   <>
-                    <div className="upload-icon">➕</div>
+                    <div className="upload-icon">🔸</div>
                     <div className="upload-text">Drag or Click to Add Picture</div>
                   </>
                 )}
