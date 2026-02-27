@@ -252,6 +252,64 @@
   border-color: var(--primary-dark);
 }
 
+/* Dropdown Menu Styles for Admin */
+.dropdown-menu-admin {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content-admin {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-white);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--shadow-lg);
+  min-width: 120px;
+  z-index: 1000;
+  margin-top: 2px;
+  animation: slideDownAdmin 0.2s ease-out;
+}
+
+@keyframes slideDownAdmin {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-content-admin button {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  color: var(--text-dark);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all var(--transition-default);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dropdown-content-admin button:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content-admin button:hover {
+  background: var(--bg-light);
+  color: var(--primary-dark);
+  padding-left: 20px;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

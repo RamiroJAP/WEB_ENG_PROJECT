@@ -14,6 +14,7 @@ export default function AdminDashboard(){
   ])
 
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [openDropdown, setOpenDropdown] = useState(null)
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -23,8 +24,6 @@ export default function AdminDashboard(){
   })
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
-
-  const categories = ['All', 'Kids', 'Men', 'Women', 'Best Seller', 'About']
 
   const filteredProducts = selectedCategory === 'All' 
     ? products 
@@ -116,16 +115,74 @@ export default function AdminDashboard(){
       </div>
 
       <div className="categories">
-        {categories.map(cat => (
+        <button 
+          className={`category-btn ${selectedCategory === 'All' ? 'active' : ''}`}
+          onClick={() => setSelectedCategory('All')}
+        >
+          All
+        </button>
+
+        {/* Kids Dropdown */}
+        <div className="dropdown-menu-admin">
           <button 
-            key={cat}
-            className={`category-btn ${selectedCategory === cat ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat)}
+            className={`category-btn ${openDropdown === 'kids' ? 'active' : ''}`}
+            onClick={() => setOpenDropdown(openDropdown === 'kids' ? null : 'kids')}
           >
-            {cat}
-            {cat !== 'All' && cat !== 'Best Seller' && cat !== 'About' && ' ▼'}
+            Kids ▼
           </button>
-        ))}
+          {openDropdown === 'kids' && (
+            <div className="dropdown-content-admin">
+              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Slippers</button>
+            </div>
+          )}
+        </div>
+
+        {/* Men Dropdown */}
+        <div className="dropdown-menu-admin">
+          <button 
+            className={`category-btn ${openDropdown === 'men' ? 'active' : ''}`}
+            onClick={() => setOpenDropdown(openDropdown === 'men' ? null : 'men')}
+          >
+            Men ▼
+          </button>
+          {openDropdown === 'men' && (
+            <div className="dropdown-content-admin">
+              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Slippers</button>
+            </div>
+          )}
+        </div>
+
+        {/* Women Dropdown */}
+        <div className="dropdown-menu-admin">
+          <button 
+            className={`category-btn ${openDropdown === 'women' ? 'active' : ''}`}
+            onClick={() => setOpenDropdown(openDropdown === 'women' ? null : 'women')}
+          >
+            Women ▼
+          </button>
+          {openDropdown === 'women' && (
+            <div className="dropdown-content-admin">
+              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Slippers</button>
+            </div>
+          )}
+        </div>
+
+        <button 
+          className={`category-btn ${selectedCategory === 'Best Seller' ? 'active' : ''}`}
+          onClick={() => setSelectedCategory('Best Seller')}
+        >
+          Best Seller
+        </button>
+
+        <button 
+          className={`category-btn ${selectedCategory === 'About' ? 'active' : ''}`}
+          onClick={() => setSelectedCategory('About')}
+        >
+          About
+        </button>
       </div>
 
       <div className="products-grid">
