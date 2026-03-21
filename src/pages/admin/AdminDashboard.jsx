@@ -136,6 +136,7 @@ export default function AdminDashboard(){
             <div className="dropdown-content-admin">
               <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Shoes</button>
               <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
@@ -152,6 +153,7 @@ export default function AdminDashboard(){
             <div className="dropdown-content-admin">
               <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Shoes</button>
               <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
@@ -168,6 +170,7 @@ export default function AdminDashboard(){
             <div className="dropdown-content-admin">
               <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Shoes</button>
               <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
