@@ -1,17 +1,85 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFavorites } from '../../context/FavoritesContext'
 import { useCart } from '../../context/CartContext'
 import { useProducts } from '../../context/ProductsContext'
 import '../../styles/user/Shop.css'
 
+const REVIEW_STORAGE_KEY = 'wolvesProductReviews'
+
 export default function Shop() {
   const [selectedAudience, setSelectedAudience] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
   const [selectedPrice, setSelectedPrice] = useState('all')
+  const [activeProduct, setActiveProduct] = useState(null)
+  const [selectedSize, setSelectedSize] = useState('40')
+  const [selectedColor, setSelectedColor] = useState('#111111')
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewsByProduct, setReviewsByProduct] = useState(() => {
+    const saved = localStorage.getItem(REVIEW_STORAGE_KEY)
+    if (!saved) return {}
+
+    try {
+      const parsed = JSON.parse(saved)
+      return parsed && typeof parsed === 'object' ? parsed : {}
+    } catch {
+      return {}
+    }
+  })
   const { addToFavorites, removeFromFavorites, isFavorited } = useFavorites()
   const { addToCart } = useCart()
   const { products } = useProducts()
 
+  useEffect(() => {
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(reviewsByProduct))
+  }, [reviewsByProduct])
+
+  const getProductReviews = (productId) => reviewsByProduct[productId] || []
+
+  const getAverageRating = (productId, fallbackRating = 4) => {
+    const reviews = getProductReviews(productId)
+    if (reviews.length === 0) return fallbackRating
+    const total = reviews.reduce((sum, review) => sum + review.rating, 0)
+    return Number((total / reviews.length).toFixed(1))
+  }
+
+  const openProductDetails = (product) => {
+    setActiveProduct(product)
+    setSelectedColor(product.color || '#111111')
+    setSelectedSize('40')
+    setReviewRating(5)
+    setReviewComment('')
+  }
+
+  const closeProductDetails = () => {
+    setActiveProduct(null)
+  }
+
+  const handleSubmitReview = () => {
+    if (!activeProduct) return
+
+    const trimmedComment = reviewComment.trim()
+    if (!trimmedComment) {
+      alert('Please write a comment review before submitting.')
+      return
+    }
+
+    const newReview = {
+      id: Date.now(),
+      rating: reviewRating,
+      comment: trimmedComment
+    }
+
+    setReviewsByProduct(prev => {
+      const current = prev[activeProduct.id] || []
+      return {
+        ...prev,
+        [activeProduct.id]: [newReview, ...current]
+      }
+    })
+
+    setReviewRating(5)
+    setReviewComment('')
   const getAudienceCategory = (audience) => {
     const normalized = (audience || '').toLowerCase()
     if (normalized === 'kids' || normalized === 'men' || normalized === 'women') {
@@ -140,18 +208,33 @@ export default function Shop() {
             <div className="products-grid">
               {filteredProducts.map(product => (
                 <div key={product.id} className="product-card">
-                  <div className="product-image-container">
+                  <div
+                    className="product-image-container"
+                    onClick={() => openProductDetails(product)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        openProductDetails(product)
+                      }
+                    }}
+                    title="View product details"
+                  >
                     <img src={product.image} alt={product.name} className="product-image" />
                     <div className="product-overlay">
                       <button 
                         className="product-quick-add"
-                        onClick={() => addToCart(product)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          addToCart(product)
+                        }}
                       >
                         Add to Cart
                       </button>
                       <button 
                         className={`product-favorite-btn ${isFavorited(product.id) ? 'favorited' : ''}`}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation()
                           if (isFavorited(product.id)) {
                             removeFromFavorites(product.id)
                           } else {
@@ -165,13 +248,13 @@ export default function Shop() {
                     </div>
                   </div>
                   <div className="product-info">
-                    <p className="product-category">{product.category.toUpperCase()}</p>
+                    <p className="product-category">{(product.category || 'general').toUpperCase()}</p>
                     <h3 className="product-name">{product.name}</h3>
                     <div className="product-rating">
-                      {'★'.repeat(Math.floor(product.rating))} 
-                      <span className="rating-score">({product.rating})</span>
+                      {'★'.repeat(Math.floor(getAverageRating(product.id, product.rating || 4)))}
+                      <span className="rating-score">({getAverageRating(product.id, product.rating || 4)})</span>
                     </div>
-                    <p className="product-price">₱{product.price.toLocaleString()}</p>
+                    <p className="product-price">₱{Number(product.price || 0).toLocaleString()}</p>
                   </div>
                 </div>
               ))}
@@ -183,6 +266,124 @@ export default function Shop() {
           )}
         </main>
       </div>
+
+      {activeProduct && (
+        <div className="product-modal-overlay" onClick={closeProductDetails}>
+          <div className="product-modal" onClick={(e) => e.stopPropagation()}>
+            {(() => {
+              const activeReviews = getProductReviews(activeProduct.id)
+              const activeAverageRating = getAverageRating(activeProduct.id, activeProduct.rating || 4)
+              return (
+                <>
+            <button className="product-modal-close" onClick={closeProductDetails}>×</button>
+            <div className="product-modal-grid">
+              <div className="product-modal-image-wrap">
+                <img
+                  src={activeProduct.image}
+                  alt={activeProduct.name}
+                  className="product-modal-image"
+                />
+
+                <div className="product-review-panel">
+                  <div className="product-review-header">
+                    <p className="product-review-title">Reviews ({activeReviews.length})</p>
+                    <p className="product-review-average">{'★'.repeat(Math.floor(activeAverageRating))} ({activeAverageRating})</p>
+                  </div>
+
+                  <div className="product-review-form">
+                    <p className="product-review-label">Write a review:</p>
+                    <div className="product-review-stars">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <button
+                          key={star}
+                          className={`review-star-btn ${reviewRating >= star ? 'active' : ''}`}
+                          onClick={() => setReviewRating(star)}
+                          title={`${star} star${star > 1 ? 's' : ''}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      className="product-review-textarea"
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="Write your comment review..."
+                    />
+                    <button className="product-review-submit" onClick={handleSubmitReview}>
+                      Submit Review
+                    </button>
+                  </div>
+
+                  <div className="product-review-list">
+                    {activeReviews.length === 0 ? (
+                      <p className="product-review-empty">No reviews yet.</p>
+                    ) : (
+                      activeReviews.slice(0, 5).map(review => (
+                        <div key={review.id} className="product-review-item">
+                          <p className="product-review-item-stars">{'★'.repeat(review.rating)}</p>
+                          <p className="product-review-item-comment">{review.comment}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="product-modal-info">
+                <h2>{activeProduct.name}</h2>
+                <p className="product-modal-price">Price: ₱{Number(activeProduct.price || 0).toLocaleString()}</p>
+                <p className="product-modal-label">colors</p>
+                <div className="product-modal-colors">
+                  {['#2b0f0f', '#d40f0f', '#6fbe31'].map(color => (
+                    <button
+                      key={color}
+                      className={`modal-color-dot ${selectedColor === color ? 'active' : ''}`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setSelectedColor(color)}
+                    />
+                  ))}
+                </div>
+
+                <p className="product-modal-label">size</p>
+                <div className="product-modal-sizes">
+                  {['39', '40', '41', '42', '43'].map(size => (
+                    <button
+                      key={size}
+                      className={`modal-size-btn ${selectedSize === size ? 'active' : ''}`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  className="product-modal-action"
+                  onClick={() => addToCart({ ...activeProduct, selectedSize, selectedColor })}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="product-modal-action secondary"
+                  onClick={() => {
+                    if (isFavorited(activeProduct.id)) {
+                      removeFromFavorites(activeProduct.id)
+                    } else {
+                      addToFavorites(activeProduct)
+                    }
+                  }}
+                >
+                  Add to Favorites
+                </button>
+              </div>
+            </div>
+                </>
+              )
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
