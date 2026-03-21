@@ -220,94 +220,77 @@
   transform: translateY(-2px);
 }
 
-.categories {
-  display: flex;
-  gap: 8px;
+.admin-filters-top {
+  background: var(--bg-white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
   margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+.admin-filter-group-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
-.category-btn {
-  padding: 8px 16px;
+.admin-filter-label {
+  font-size: 12px;
+  color: var(--text-dark);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.admin-filter-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-btn-small,
+.admin-filter-select {
+  padding: 6px 12px;
   border: 1px solid var(--border-medium);
   background: var(--bg-white);
   color: var(--text-dark);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   transition: all var(--transition-default);
+  text-transform: uppercase;
+  letter-spacing: 0.25px;
+  white-space: nowrap;
 }
 
-.category-btn:hover {
+.admin-filter-btn-small:hover,
+.admin-filter-select:hover {
   border-color: var(--primary-dark);
   color: var(--primary-dark);
 }
 
-.category-btn.active {
+.admin-filter-btn-small.active {
   background: var(--primary-dark);
   color: var(--text-white);
   border-color: var(--primary-dark);
 }
 
-/* Dropdown Menu Styles for Admin */
-.dropdown-menu-admin {
-  position: relative;
-  display: inline-block;
+.admin-filter-select {
+  min-width: 140px;
 }
 
-.dropdown-content-admin {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--bg-white);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--border-radius-sm);
-  box-shadow: var(--shadow-lg);
-  min-width: 120px;
-  z-index: 1000;
-  margin-top: 2px;
-  animation: slideDownAdmin 0.2s ease-out;
-}
-
-@keyframes slideDownAdmin {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dropdown-content-admin button {
-  display: block;
-  width: 100%;
-  padding: 10px 16px;
-  border: none;
-  background: none;
-  color: var(--text-dark);
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: left;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all var(--transition-default);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.dropdown-content-admin button:last-child {
-  border-bottom: none;
-}
-
-.dropdown-content-admin button:hover {
-  background: var(--bg-light);
-  color: var(--primary-dark);
-  padding-left: 20px;
+.admin-filter-select:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(24, 24, 26, 0.1);
 }
 
 .products-grid {
