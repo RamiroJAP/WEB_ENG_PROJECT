@@ -1,17 +1,9 @@
 import React, { useState, useRef } from 'react'
 import '../../styles/admin/AdminDashboard.css'
+import { useProducts } from '../../context/ProductsContext'
 
 export default function AdminDashboard(){
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Golden Runner', category: 'Men', image: '👟' },
-    { id: 2, name: 'Black Max', category: 'Men', image: '👟' },
-    { id: 3, name: 'Jordan Low', category: 'Men', image: '👟' },
-    { id: 4, name: 'Purple Sneaker', category: 'Best Seller', image: '👟' },
-    { id: 5, name: 'White Slides', category: 'Kids', image: '👟' },
-    { id: 6, name: 'Beige Slides', category: 'Women', image: '👟' },
-    { id: 7, name: 'Black Slides', category: 'Kids', image: '👟' },
-    { id: 8, name: 'Cream Slides', category: 'Women', image: '👟' }
-  ])
+  const { products, addProduct } = useProducts()
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [openDropdown, setOpenDropdown] = useState(null)
@@ -25,9 +17,11 @@ export default function AdminDashboard(){
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
 
-  const filteredProducts = selectedCategory === 'All' 
-    ? products 
-    : products.filter(p => p.category === selectedCategory)
+  const filteredProducts = selectedCategory === 'All'
+    ? products
+    : products.filter(
+        p => (p.category || '').toLowerCase() === selectedCategory.toLowerCase()
+      )
 
   const handleAddProductClick = () => {
     setShowAddProductModal(true)
@@ -90,15 +84,13 @@ export default function AdminDashboard(){
 
   const handleSaveProduct = () => {
     if (newProduct.name && newProduct.size) {
-      const product = {
-        id: products.length + 1,
+      addProduct({
         name: newProduct.name,
-        color: newProduct.color,
-        size: newProduct.size,
-        category: 'Men',
-        image: newProduct.image || '👟'
-      }
-      setProducts([...products, product])
+        image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
+        category: 'casual',
+        price: 2999,
+        rating: 4.0
+      })
       handleCloseModal()
     } else {
       alert('Please fill in all fields')
@@ -189,7 +181,11 @@ export default function AdminDashboard(){
         {filteredProducts.map(product => (
           <div key={product.id} className="product-card">
             <div className="product-image">
-              {product.image}
+              {typeof product.image === 'string' && (product.image.startsWith('data:image') || product.image.startsWith('http')) ? (
+                <img src={product.image} alt={product.name} className="picture-preview" />
+              ) : (
+                product.image
+              )}
             </div>
             <div className="product-name">{product.name}</div>
           </div>

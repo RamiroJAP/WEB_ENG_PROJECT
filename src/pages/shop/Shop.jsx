@@ -1,112 +1,15 @@
 import React, { useState } from 'react'
+import { useFavorites } from '../../context/FavoritesContext'
 import { useCart } from '../../context/CartContext'
+import { useProducts } from '../../context/ProductsContext'
 import '../../styles/user/Shop.css'
 
 export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedPrice, setSelectedPrice] = useState('all')
-  const [addedToCart, setAddedToCart] = useState(null)
+  const { addToFavorites, removeFromFavorites, isFavorited } = useFavorites()
   const { addToCart } = useCart()
-
-  // Sample product data
-  const products = [
-    {
-      id: 1,
-      name: 'Classic Running Sneakers',
-      category: 'running',
-      price: 4500,
-      image: 'https://via.placeholder.com/300x300?text=Running+Shoe+1',
-      rating: 4.5
-    },
-    {
-      id: 2,
-      name: 'Casual Street Shoes',
-      category: 'casual',
-      price: 3500,
-      image: 'https://via.placeholder.com/300x300?text=Casual+Shoe+1',
-      rating: 4.2
-    },
-    {
-      id: 3,
-      name: 'Basketball Peak Shoes',
-      category: 'basketball',
-      price: 5500,
-      image: 'https://via.placeholder.com/300x300?text=Basketball+1',
-      rating: 4.8
-    },
-    {
-      id: 4,
-      name: 'Training Elite Flex',
-      category: 'training',
-      price: 4800,
-      image: 'https://via.placeholder.com/300x300?text=Training+1',
-      rating: 4.6
-    },
-    {
-      id: 5,
-      name: 'Casual Loafers',
-      category: 'casual',
-      price: 2800,
-      image: 'https://via.placeholder.com/300x300?text=Loafer+1',
-      rating: 4.3
-    },
-    {
-      id: 6,
-      name: 'Marathon Pro',
-      category: 'running',
-      price: 5200,
-      image: 'https://via.placeholder.com/300x300?text=Marathon+1',
-      rating: 4.7
-    },
-    {
-      id: 7,
-      name: 'Formal Oxford',
-      category: 'formal',
-      price: 3800,
-      image: 'https://via.placeholder.com/300x300?text=Formal+1',
-      rating: 4.4
-    },
-    {
-      id: 8,
-      name: 'Sports Court Shoes',
-      category: 'basketball',
-      price: 5000,
-      image: 'https://via.placeholder.com/300x300?text=Court+1',
-      rating: 4.5
-    },
-    {
-      id: 9,
-      name: 'Training Force Plus',
-      category: 'training',
-      price: 4200,
-      image: 'https://via.placeholder.com/300x300?text=Training+2',
-      rating: 4.4
-    },
-    {
-      id: 10,
-      name: 'Urban Sneaker Style',
-      category: 'casual',
-      price: 3200,
-      image: 'https://via.placeholder.com/300x300?text=Urban+1',
-      rating: 4.1
-    },
-    {
-      id: 11,
-      name: 'Running Sprint Max',
-      category: 'running',
-      price: 4900,
-      image: 'https://via.placeholder.com/300x300?text=Sprint+1',
-      rating: 4.6
-    },
-    {
-      id: 12,
-      name: 'Wellness Walk Pro',
-      category: 'casual',
-      price: 2500,
-      image: 'https://via.placeholder.com/300x300?text=Walk+1',
-      rating: 4.0
-    }
-  ]
+  const { products } = useProducts()
 
   // Filter products
   const filteredProducts = products.filter(product => {
@@ -211,16 +114,27 @@ export default function Shop() {
                 <div key={product.id} className="product-card">
                   <div className="product-image-container">
                     <img src={product.image} alt={product.name} className="product-image" />
-                    <button 
-                      className="product-quick-add"
-                      onClick={() => {
-                        addToCart(product)
-                        setAddedToCart(product.id)
-                        setTimeout(() => setAddedToCart(null), 2000)
-                      }}
-                    >
-                      {addedToCart === product.id ? '✓ Added!' : 'Add to Cart'}
-                    </button>
+                    <div className="product-overlay">
+                      <button 
+                        className="product-quick-add"
+                        onClick={() => addToCart(product)}
+                      >
+                        Add to Cart
+                      </button>
+                      <button 
+                        className={`product-favorite-btn ${isFavorited(product.id) ? 'favorited' : ''}`}
+                        onClick={() => {
+                          if (isFavorited(product.id)) {
+                            removeFromFavorites(product.id)
+                          } else {
+                            addToFavorites(product)
+                          }
+                        }}
+                        title={isFavorited(product.id) ? 'Remove from favorites' : 'Add to favorites'}
+                      >
+                        ♥
+                      </button>
+                    </div>
                   </div>
                   <div className="product-info">
                     <p className="product-category">{product.category.toUpperCase()}</p>
