@@ -358,6 +358,15 @@
   word-break: break-word;
 }
 
+.product-category {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

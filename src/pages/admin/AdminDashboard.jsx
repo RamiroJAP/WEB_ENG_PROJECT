@@ -10,6 +10,8 @@ export default function AdminDashboard(){
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
+    category: 'Men',
+    price: '',
     color: '#FF0000',
     size: '',
     image: null
@@ -29,7 +31,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', category: 'Men', price: '', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -83,17 +85,19 @@ export default function AdminDashboard(){
   }
 
   const handleSaveProduct = () => {
-    if (newProduct.name && newProduct.size) {
+    const parsedPrice = Number(newProduct.price)
+
+    if (newProduct.name && newProduct.size && newProduct.category && parsedPrice > 0) {
       addProduct({
         name: newProduct.name,
         image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
-        category: 'casual',
-        price: 2999,
+        category: newProduct.category,
+        price: parsedPrice,
         rating: 4.0
       })
       handleCloseModal()
     } else {
-      alert('Please fill in all fields')
+      alert('Please fill in all fields and enter a valid price')
     }
   }
 
@@ -188,6 +192,7 @@ export default function AdminDashboard(){
               )}
             </div>
             <div className="product-name">{product.name}</div>
+            <div className="product-category">{product.category || 'Uncategorized'}</div>
           </div>
         ))}
       </div>
@@ -238,6 +243,21 @@ export default function AdminDashboard(){
               </div>
 
               <div className="form-group">
+                <label>ADD CATEGORY:</label>
+                <select
+                  name="category"
+                  value={newProduct.category}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="Kids">Kids</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                  <option value="Best Seller">Best Seller</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label>ADD COLOR:</label>
                 <div className="color-picker">
                   <button 
@@ -265,6 +285,20 @@ export default function AdminDashboard(){
                   name="size"
                   placeholder=""
                   value={newProduct.size}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>ADD PRICE:</label>
+                <input
+                  type="number"
+                  name="price"
+                  min="1"
+                  step="1"
+                  placeholder="Enter price"
+                  value={newProduct.price}
                   onChange={handleInputChange}
                   className="form-input"
                 />
