@@ -1,16 +1,35 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
+import { useProducts } from '../../context/ProductsContext'
 import Receipt from './Receipt'
 import './Cart.css'
 
 export default function Cart() {
   const navigate = useNavigate()
-  const { cart, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart()
+  const { cart, removeFromCart, updateQuantity, clearCart } = useCart()
+  const { products } = useProducts()
   const [showReceipt, setShowReceipt] = useState(false)
 
+  const getLivePrice = (item) => {
+    const matchedProduct = products.find((product) => product.id === item.id)
+    const candidatePrice = matchedProduct?.price ?? item.price
+    const numericPrice = Number(candidatePrice)
+    return Number.isFinite(numericPrice) ? numericPrice : 0
+  }
+
+  const cartWithLivePrices = cart.map((item) => ({
+    ...item,
+    price: getLivePrice(item)
+  }))
+
+  const totalPrice = cartWithLivePrices.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  )
+
   const handleCheckout = () => {
-    if (cart.length === 0) {
+    if (cartWithLivePrices.length === 0) {
       alert('Your cart is empty!')
       return
     }
@@ -24,10 +43,10 @@ export default function Cart() {
   }
 
   if (showReceipt) {
-    return <Receipt cart={cart} total={getTotalPrice()} onClose={handleReceiptClose} />
+    return <Receipt cart={cartWithLivePrices} total={totalPrice} onClose={handleReceiptClose} />
   }
 
-  if (cart.length === 0) {
+  if (cartWithLivePrices.length === 0) {
     return (
       <div className="cart-container">
         <div className="empty-cart">
@@ -47,14 +66,14 @@ export default function Cart() {
       
       <div className="cart-content">
         <div className="cart-items">
-          {cart.map(item => (
+          {cartWithLivePrices.map(item => (
             <div key={item.id} className="cart-item">
               <div className="item-image">
                 <img src={item.image} alt={item.name} />
               </div>
               <div className="item-details">
                 <h3>{item.name}</h3>
-                <p className="item-price">₹{item.price}</p>
+                <p className="item-price">₱{item.price.toLocaleString()}</p>
               </div>
               <div className="item-quantity">
                 <button
@@ -72,7 +91,7 @@ export default function Cart() {
                 </button>
               </div>
               <div className="item-subtotal">
-                ₹{(item.price * item.quantity).toFixed(2)}
+                ₱{(item.price * item.quantity).toLocaleString()}
               </div>
               <button
                 className="remove-btn"
@@ -88,11 +107,11 @@ export default function Cart() {
           <h2>Order Summary</h2>
           <div className="summary-row">
             <span>Subtotal:</span>
-            <span>₹{getTotalPrice().toFixed(2)}</span>
+            <span>₱{totalPrice.toLocaleString()}</span>
           </div>
           <div className="summary-row total">
             <span>Total:</span>
-            <span>₹{getTotalPrice().toFixed(2)}</span>
+            <span>₱{totalPrice.toLocaleString()}</span>
           </div>
           <button className="checkout-btn" onClick={handleCheckout}>
             Proceed to Checkout

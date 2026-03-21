@@ -81,8 +81,8 @@ export default function Receipt({ cart, total, onClose }) {
                   <tr key={item.id}>
                     <td className="receipt-product-name">{item.name}</td>
                     <td className="receipt-td-center">{item.quantity}</td>
-                    <td className="receipt-td-right">₹{item.price}</td>
-                    <td className="receipt-td-right">₹{(item.price * item.quantity).toFixed(2)}</td>
+                    <td className="receipt-td-right">₱{Number(item.price || 0).toLocaleString()}</td>
+                    <td className="receipt-td-right">₱{Number(item.price * item.quantity || 0).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -95,7 +95,7 @@ export default function Receipt({ cart, total, onClose }) {
           <div className="receipt-summary-section">
             <div className="receipt-summary-row">
               <span>Subtotal:</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>₱{Number(total || 0).toLocaleString()}</span>
             </div>
             <div className="receipt-summary-row">
               <span>Shipping:</span>
@@ -103,7 +103,7 @@ export default function Receipt({ cart, total, onClose }) {
             </div>
             <div className="receipt-summary-row receipt-total">
               <span>TOTAL AMOUNT:</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>₱{Number(total || 0).toLocaleString()}</span>
             </div>
           </div>
 
