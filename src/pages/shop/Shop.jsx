@@ -5,20 +5,37 @@ import { useProducts } from '../../context/ProductsContext'
 import '../../styles/user/Shop.css'
 
 export default function Shop() {
-  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedAudience, setSelectedAudience] = useState('all')
+  const [selectedType, setSelectedType] = useState('all')
   const [selectedPrice, setSelectedPrice] = useState('all')
   const { addToFavorites, removeFromFavorites, isFavorited } = useFavorites()
   const { addToCart } = useCart()
   const { products } = useProducts()
 
+  const getAudienceCategory = (audience) => {
+    const normalized = (audience || '').toLowerCase()
+    if (normalized === 'kids' || normalized === 'men' || normalized === 'women') {
+      return normalized
+    }
+    return 'men'
+  }
+
+  const getProductType = (product) => {
+    const normalizedType = (product.type || product.category || '').toLowerCase()
+    const validTypes = ['running', 'casual', 'basketball', 'slippers', 'sandals']
+    return validTypes.includes(normalizedType) ? normalizedType : 'casual'
+  }
+
   // Filter products
   const filteredProducts = products.filter(product => {
-    const categoryMatch = selectedCategory === 'all' || product.category === selectedCategory
+    const audienceMatch =
+      selectedAudience === 'all' || getAudienceCategory(product.audience) === selectedAudience
+    const typeMatch = selectedType === 'all' || getProductType(product) === selectedType
     const priceMatch = selectedPrice === 'all' || 
       (selectedPrice === 'budget' && product.price <= 3500) ||
       (selectedPrice === 'mid' && product.price > 3500 && product.price <= 4500) ||
       (selectedPrice === 'premium' && product.price > 4500)
-    return categoryMatch && priceMatch
+    return audienceMatch && typeMatch && priceMatch
   })
 
   return (
@@ -34,43 +51,54 @@ export default function Shop() {
             <h4 className="filter-label">Category:</h4>
             <div className="filter-buttons">
               <button 
-                className={`filter-btn-small ${selectedCategory === 'all' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('all')}
+                className={`filter-btn-small ${selectedAudience === 'all' ? 'active' : ''}`}
+                onClick={() => {
+                  setSelectedAudience('all')
+                  setSelectedType('all')
+                }}
               >
                 All Products
               </button>
               <button 
-                className={`filter-btn-small ${selectedCategory === 'running' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('running')}
+                className={`filter-btn-small ${selectedAudience === 'kids' ? 'active' : ''}`}
+                onClick={() => setSelectedAudience('kids')}
               >
-                Running
+                Kids
               </button>
               <button 
-                className={`filter-btn-small ${selectedCategory === 'casual' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('casual')}
+                className={`filter-btn-small ${selectedAudience === 'men' ? 'active' : ''}`}
+                onClick={() => setSelectedAudience('men')}
               >
-                Casual
+                Men
               </button>
               <button 
-                className={`filter-btn-small ${selectedCategory === 'basketball' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('basketball')}
+                className={`filter-btn-small ${selectedAudience === 'women' ? 'active' : ''}`}
+                onClick={() => setSelectedAudience('women')}
               >
-                Basketball
-              </button>
-              <button 
-                className={`filter-btn-small ${selectedCategory === 'training' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('training')}
-              >
-                Training
-              </button>
-              <button 
-                className={`filter-btn-small ${selectedCategory === 'formal' ? 'active' : ''}`}
-                onClick={() => setSelectedCategory('formal')}
-              >
-                Formal
+                Women
               </button>
             </div>
           </div>
+
+          {selectedAudience !== 'all' && (
+            <div className="filter-group-inline">
+              <h4 className="filter-label">Type:</h4>
+              <div className="filter-buttons">
+                <select
+                  className="filter-btn-small"
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                >
+                  <option value="all">All Types</option>
+                  <option value="running">Running</option>
+                  <option value="casual">Casual</option>
+                  <option value="basketball">Basketball</option>
+                  <option value="slippers">Slippers</option>
+                  <option value="sandals">Sandals</option>
+                </select>
+              </div>
+            </div>
+          )}
 
           <div className="filter-group-inline">
             <h4 className="filter-label">Price:</h4>
