@@ -3,13 +3,15 @@ import '../../styles/admin/AdminDashboard.css'
 import { useProducts } from '../../context/ProductsContext'
 
 export default function AdminDashboard(){
-  const { products, addProduct } = useProducts()
+  const { products, addProduct, removeProduct } = useProducts()
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [openDropdown, setOpenDropdown] = useState(null)
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
+    category: 'Running',
+    price: '',
     color: '#FF0000',
     size: '',
     image: null
@@ -29,7 +31,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', category: 'Running', price: '', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -83,18 +85,24 @@ export default function AdminDashboard(){
   }
 
   const handleSaveProduct = () => {
-    if (newProduct.name && newProduct.size) {
+    const parsedPrice = Number(newProduct.price)
+
+    if (newProduct.name && newProduct.size && newProduct.category && parsedPrice > 0) {
       addProduct({
         name: newProduct.name,
         image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
-        category: 'casual',
-        price: 2999,
+        category: newProduct.category,
+        price: parsedPrice,
         rating: 4.0
       })
       handleCloseModal()
     } else {
-      alert('Please fill in all fields')
+      alert('Please fill in all fields and enter a valid price')
     }
+  }
+
+  const handleDeleteProduct = (productId) => {
+    removeProduct(productId)
   }
 
   return (
@@ -188,6 +196,13 @@ export default function AdminDashboard(){
               )}
             </div>
             <div className="product-name">{product.name}</div>
+            <div className="product-category">{product.category || 'Uncategorized'}</div>
+            <button
+              className="delete-product-btn"
+              onClick={() => handleDeleteProduct(product.id)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
@@ -238,12 +253,33 @@ export default function AdminDashboard(){
               </div>
 
               <div className="form-group">
+                <label>ADD CATEGORY:</label>
+                <select
+                  name="category"
+                  value={newProduct.category}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="Running">Running</option>
+                  <option value="Casual">Casual</option>
+                  <option value="Basketball">Basketball</option>
+                  <option value="Training">Training</option>
+                  <option value="Formal">Formal</option>
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label>ADD COLOR:</label>
                 <div className="color-picker">
                   <button 
                     className={`color-btn ${newProduct.color === '#FF0000' ? 'active' : ''}`}
                     onClick={() => handleColorChange('#FF0000')}
                     style={{ backgroundColor: '#FF0000' }}
+                  />
+                  <button
+                    className={`color-btn ${newProduct.color === '#FFFFFF' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#FFFFFF')}
+                    style={{ backgroundColor: '#FFFFFF' }}
                   />
                   <button 
                     className={`color-btn ${newProduct.color === '#9B59B6' ? 'active' : ''}`}
@@ -265,6 +301,20 @@ export default function AdminDashboard(){
                   name="size"
                   placeholder=""
                   value={newProduct.size}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>ADD PRICE:</label>
+                <input
+                  type="number"
+                  name="price"
+                  min="1"
+                  step="1"
+                  placeholder="Enter price"
+                  value={newProduct.price}
                   onChange={handleInputChange}
                   className="form-input"
                 />
