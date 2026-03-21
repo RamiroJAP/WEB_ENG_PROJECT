@@ -13,11 +13,14 @@ export default function AdminDashboard(){
     { id: 8, name: 'Cream Slides', category: 'Women', image: '👟' }
   ])
 
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [selectedAudience, setSelectedAudience] = useState('All')
+  const [selectedType, setSelectedType] = useState('All')
   const [openDropdown, setOpenDropdown] = useState(null)
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
+    audience: 'Men',
+    type: 'Shoes',
     color: '#FF0000',
     size: '',
     image: null
@@ -25,9 +28,22 @@ export default function AdminDashboard(){
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
 
-  const filteredProducts = selectedCategory === 'All' 
-    ? products 
-    : products.filter(p => p.category === selectedCategory)
+  const getProductAudience = (product) => product.audience || product.category || 'Men'
+
+  const getProductType = (product) => {
+    if (product.type) return product.type
+
+    const productName = (product.name || '').toLowerCase()
+    if (productName.includes('slipper') || productName.includes('slide')) return 'Slippers'
+    if (productName.includes('sandal')) return 'Sandals'
+    return 'Shoes'
+  }
+
+  const filteredProducts = products.filter(product => {
+    const audienceMatch = selectedAudience === 'All' || getProductAudience(product) === selectedAudience
+    const typeMatch = selectedType === 'All' || getProductType(product) === selectedType
+    return audienceMatch && typeMatch
+  })
 
   const handleAddProductClick = () => {
     setShowAddProductModal(true)
@@ -35,7 +51,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', audience: 'Men', type: 'Shoes', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -93,9 +109,11 @@ export default function AdminDashboard(){
       const product = {
         id: products.length + 1,
         name: newProduct.name,
+        audience: newProduct.audience,
+        type: newProduct.type,
         color: newProduct.color,
         size: newProduct.size,
-        category: 'Men',
+        category: newProduct.audience,
         image: newProduct.image || '👟'
       }
       setProducts([...products, product])
@@ -116,8 +134,11 @@ export default function AdminDashboard(){
 
       <div className="categories">
         <button 
-          className={`category-btn ${selectedCategory === 'All' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('All')}
+          className={`category-btn ${selectedAudience === 'All' ? 'active' : ''}`}
+          onClick={() => {
+            setSelectedAudience('All')
+            setSelectedType('All')
+          }}
         >
           All
         </button>
@@ -125,16 +146,16 @@ export default function AdminDashboard(){
         {/* Kids Dropdown */}
         <div className="dropdown-menu-admin">
           <button 
-            className={`category-btn ${openDropdown === 'kids' ? 'active' : ''}`}
+            className={`category-btn ${selectedAudience === 'Kids' ? 'active' : ''}`}
             onClick={() => setOpenDropdown(openDropdown === 'kids' ? null : 'kids')}
           >
             Kids ▼
           </button>
           {openDropdown === 'kids' && (
             <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Sandals</button>
+              <button onClick={() => { setSelectedAudience('Kids'); setSelectedType('Shoes'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedAudience('Kids'); setSelectedType('Slippers'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedAudience('Kids'); setSelectedType('Sandals'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
@@ -142,16 +163,16 @@ export default function AdminDashboard(){
         {/* Men Dropdown */}
         <div className="dropdown-menu-admin">
           <button 
-            className={`category-btn ${openDropdown === 'men' ? 'active' : ''}`}
+            className={`category-btn ${selectedAudience === 'Men' ? 'active' : ''}`}
             onClick={() => setOpenDropdown(openDropdown === 'men' ? null : 'men')}
           >
             Men ▼
           </button>
           {openDropdown === 'men' && (
             <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Sandals</button>
+              <button onClick={() => { setSelectedAudience('Men'); setSelectedType('Shoes'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedAudience('Men'); setSelectedType('Slippers'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedAudience('Men'); setSelectedType('Sandals'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
@@ -159,30 +180,36 @@ export default function AdminDashboard(){
         {/* Women Dropdown */}
         <div className="dropdown-menu-admin">
           <button 
-            className={`category-btn ${openDropdown === 'women' ? 'active' : ''}`}
+            className={`category-btn ${selectedAudience === 'Women' ? 'active' : ''}`}
             onClick={() => setOpenDropdown(openDropdown === 'women' ? null : 'women')}
           >
             Women ▼
           </button>
           {openDropdown === 'women' && (
             <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Sandals</button>
+              <button onClick={() => { setSelectedAudience('Women'); setSelectedType('Shoes'); setOpenDropdown(null); }}>Shoes</button>
+              <button onClick={() => { setSelectedAudience('Women'); setSelectedType('Slippers'); setOpenDropdown(null); }}>Slippers</button>
+              <button onClick={() => { setSelectedAudience('Women'); setSelectedType('Sandals'); setOpenDropdown(null); }}>Sandals</button>
             </div>
           )}
         </div>
 
         <button 
-          className={`category-btn ${selectedCategory === 'Best Seller' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('Best Seller')}
+          className={`category-btn ${selectedAudience === 'Best Seller' ? 'active' : ''}`}
+          onClick={() => {
+            setSelectedAudience('Best Seller')
+            setSelectedType('All')
+          }}
         >
           Best Seller
         </button>
 
         <button 
-          className={`category-btn ${selectedCategory === 'About' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('About')}
+          className={`category-btn ${selectedAudience === 'About' ? 'active' : ''}`}
+          onClick={() => {
+            setSelectedAudience('About')
+            setSelectedType('All')
+          }}
         >
           About
         </button>
@@ -195,6 +222,7 @@ export default function AdminDashboard(){
               {product.image}
             </div>
             <div className="product-name">{product.name}</div>
+            <div className="product-meta">{getProductAudience(product)} • {getProductType(product)}</div>
           </div>
         ))}
       </div>
@@ -242,6 +270,34 @@ export default function AdminDashboard(){
                   onChange={handleInputChange}
                   className="form-input"
                 />
+              </div>
+
+              <div className="form-group">
+                <label>ADD TYPE:</label>
+                <select
+                  name="audience"
+                  value={newProduct.audience}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="Kids">Kids</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>ADD CATEGORY:</label>
+                <select
+                  name="type"
+                  value={newProduct.type}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="Shoes">Shoes</option>
+                  <option value="Slippers">Slippers</option>
+                  <option value="Sandals">Sandals</option>
+                </select>
               </div>
 
               <div className="form-group">
