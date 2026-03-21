@@ -80,6 +80,8 @@ export default function Shop() {
 
     setReviewRating(5)
     setReviewComment('')
+  }
+
   const getAudienceCategory = (audience) => {
     const normalized = (audience || '').toLowerCase()
     if (normalized === 'kids' || normalized === 'men' || normalized === 'women') {
