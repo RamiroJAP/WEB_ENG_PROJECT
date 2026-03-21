@@ -367,6 +367,23 @@
   letter-spacing: 0.4px;
 }
 
+.delete-product-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: #dc3545;
+  color: var(--text-white);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-default);
+}
+
+.delete-product-btn:hover {
+  background: #b02a37;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;

@@ -3,14 +3,14 @@ import '../../styles/admin/AdminDashboard.css'
 import { useProducts } from '../../context/ProductsContext'
 
 export default function AdminDashboard(){
-  const { products, addProduct } = useProducts()
+  const { products, addProduct, removeProduct } = useProducts()
 
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [openDropdown, setOpenDropdown] = useState(null)
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
-    category: 'Men',
+    category: 'Running',
     price: '',
     color: '#FF0000',
     size: '',
@@ -31,7 +31,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', category: 'Men', price: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', category: 'Running', price: '', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -99,6 +99,10 @@ export default function AdminDashboard(){
     } else {
       alert('Please fill in all fields and enter a valid price')
     }
+  }
+
+  const handleDeleteProduct = (productId) => {
+    removeProduct(productId)
   }
 
   return (
@@ -193,6 +197,12 @@ export default function AdminDashboard(){
             </div>
             <div className="product-name">{product.name}</div>
             <div className="product-category">{product.category || 'Uncategorized'}</div>
+            <button
+              className="delete-product-btn"
+              onClick={() => handleDeleteProduct(product.id)}
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
@@ -250,10 +260,11 @@ export default function AdminDashboard(){
                   onChange={handleInputChange}
                   className="form-input"
                 >
-                  <option value="Kids">Kids</option>
-                  <option value="Men">Men</option>
-                  <option value="Women">Women</option>
-                  <option value="Best Seller">Best Seller</option>
+                  <option value="Running">Running</option>
+                  <option value="Casual">Casual</option>
+                  <option value="Basketball">Basketball</option>
+                  <option value="Training">Training</option>
+                  <option value="Formal">Formal</option>
                 </select>
               </div>
 
@@ -264,6 +275,11 @@ export default function AdminDashboard(){
                     className={`color-btn ${newProduct.color === '#FF0000' ? 'active' : ''}`}
                     onClick={() => handleColorChange('#FF0000')}
                     style={{ backgroundColor: '#FF0000' }}
+                  />
+                  <button
+                    className={`color-btn ${newProduct.color === '#FFFFFF' ? 'active' : ''}`}
+                    onClick={() => handleColorChange('#FFFFFF')}
+                    style={{ backgroundColor: '#FFFFFF' }}
                   />
                   <button 
                     className={`color-btn ${newProduct.color === '#9B59B6' ? 'active' : ''}`}
