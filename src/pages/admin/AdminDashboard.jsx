@@ -11,6 +11,7 @@ export default function AdminDashboard(){
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: 'Running',
+    audience: 'Men',
     price: '',
     color: '#FF0000',
     size: '',
@@ -31,7 +32,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', category: 'Running', price: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', category: 'Running', audience: 'Men', price: '', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -87,11 +88,12 @@ export default function AdminDashboard(){
   const handleSaveProduct = () => {
     const parsedPrice = Number(newProduct.price)
 
-    if (newProduct.name && newProduct.size && newProduct.category && parsedPrice > 0) {
+    if (newProduct.name && newProduct.size && newProduct.category && newProduct.audience && parsedPrice > 0) {
       addProduct({
         name: newProduct.name,
         image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
         category: newProduct.category,
+        audience: newProduct.audience,
         price: parsedPrice,
         rating: 4.0
       })
@@ -263,8 +265,22 @@ export default function AdminDashboard(){
                   <option value="Running">Running</option>
                   <option value="Casual">Casual</option>
                   <option value="Basketball">Basketball</option>
-                  <option value="Training">Training</option>
-                  <option value="Formal">Formal</option>
+                  <option value="Slippers">Slippers</option>
+                  <option value="Sandals">Sandals</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>ADD TYPE:</label>
+                <select
+                  name="audience"
+                  value={newProduct.audience}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="Kids">Kids</option>
+                  <option value="Men">Men</option>
+                  <option value="Women">Women</option>
                 </select>
               </div>
 
