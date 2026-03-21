@@ -134,8 +134,12 @@ export const ProductsProvider = ({ children }) => {
     return newProduct
   }
 
+  const removeProduct = (productId) => {
+    setProducts(prev => prev.filter(product => product.id !== productId))
+  }
+
   return (
-    <ProductsContext.Provider value={{ products, addProduct }}>
+    <ProductsContext.Provider value={{ products, addProduct, removeProduct }}>
       {children}
     </ProductsContext.Provider>
   )
