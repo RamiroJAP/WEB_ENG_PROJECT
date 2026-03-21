@@ -5,8 +5,8 @@ import { useProducts } from '../../context/ProductsContext'
 export default function AdminDashboard(){
   const { products, addProduct, removeProduct } = useProducts()
 
-  const [selectedCategory, setSelectedCategory] = useState('All')
-  const [openDropdown, setOpenDropdown] = useState(null)
+  const [selectedAudience, setSelectedAudience] = useState('all')
+  const [selectedType, setSelectedType] = useState('all')
   const [showAddProductModal, setShowAddProductModal] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -20,11 +20,27 @@ export default function AdminDashboard(){
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef(null)
 
-  const filteredProducts = selectedCategory === 'All'
-    ? products
-    : products.filter(
-        p => (p.category || '').toLowerCase() === selectedCategory.toLowerCase()
-      )
+  const getAudienceCategory = (audience) => {
+    const normalized = (audience || '').toLowerCase()
+    if (normalized === 'kids' || normalized === 'men' || normalized === 'women') {
+      return normalized
+    }
+    return 'men'
+  }
+
+  const getProductType = (category) => {
+    const normalized = (category || '').toLowerCase()
+    if (normalized === 'slippers') return 'slippers'
+    if (normalized === 'sandals') return 'sandals'
+    return 'shoes'
+  }
+
+  const filteredProducts = products.filter((product) => {
+    const audienceMatch =
+      selectedAudience === 'all' || getAudienceCategory(product.audience) === selectedAudience
+    const typeMatch = selectedType === 'all' || getProductType(product.category) === selectedType
+    return audienceMatch && typeMatch
+  })
 
   const handleAddProductClick = () => {
     setShowAddProductModal(true)
@@ -116,78 +132,55 @@ export default function AdminDashboard(){
         </button>
       </div>
 
-      <div className="categories">
-        <button 
-          className={`category-btn ${selectedCategory === 'All' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('All')}
-        >
-          All
-        </button>
-
-        {/* Kids Dropdown */}
-        <div className="dropdown-menu-admin">
-          <button 
-            className={`category-btn ${openDropdown === 'kids' ? 'active' : ''}`}
-            onClick={() => setOpenDropdown(openDropdown === 'kids' ? null : 'kids')}
-          >
-            Kids ▼
-          </button>
-          {openDropdown === 'kids' && (
-            <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Kids'); setOpenDropdown(null); }}>Sandals</button>
-            </div>
-          )}
+      <div className="admin-filters-top">
+        <div className="admin-filter-group-inline">
+          <h4 className="admin-filter-label">Category:</h4>
+          <div className="admin-filter-buttons">
+            <button
+              className={`admin-filter-btn-small ${selectedAudience === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                setSelectedAudience('all')
+                setSelectedType('all')
+              }}
+            >
+              All Products
+            </button>
+            <button
+              className={`admin-filter-btn-small ${selectedAudience === 'kids' ? 'active' : ''}`}
+              onClick={() => setSelectedAudience('kids')}
+            >
+              Kids
+            </button>
+            <button
+              className={`admin-filter-btn-small ${selectedAudience === 'men' ? 'active' : ''}`}
+              onClick={() => setSelectedAudience('men')}
+            >
+              Men
+            </button>
+            <button
+              className={`admin-filter-btn-small ${selectedAudience === 'women' ? 'active' : ''}`}
+              onClick={() => setSelectedAudience('women')}
+            >
+              Women
+            </button>
+          </div>
         </div>
 
-        {/* Men Dropdown */}
-        <div className="dropdown-menu-admin">
-          <button 
-            className={`category-btn ${openDropdown === 'men' ? 'active' : ''}`}
-            onClick={() => setOpenDropdown(openDropdown === 'men' ? null : 'men')}
-          >
-            Men ▼
-          </button>
-          {openDropdown === 'men' && (
-            <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Men'); setOpenDropdown(null); }}>Sandals</button>
-            </div>
-          )}
+        <div className="admin-filter-group-inline">
+          <h4 className="admin-filter-label">Type:</h4>
+          <div className="admin-filter-buttons">
+            <select
+              className="admin-filter-select"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option value="all">All Types</option>
+              <option value="shoes">Shoes</option>
+              <option value="slippers">Slippers</option>
+              <option value="sandals">Sandals</option>
+            </select>
+          </div>
         </div>
-
-        {/* Women Dropdown */}
-        <div className="dropdown-menu-admin">
-          <button 
-            className={`category-btn ${openDropdown === 'women' ? 'active' : ''}`}
-            onClick={() => setOpenDropdown(openDropdown === 'women' ? null : 'women')}
-          >
-            Women ▼
-          </button>
-          {openDropdown === 'women' && (
-            <div className="dropdown-content-admin">
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Shoes</button>
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Slippers</button>
-              <button onClick={() => { setSelectedCategory('Women'); setOpenDropdown(null); }}>Sandals</button>
-            </div>
-          )}
-        </div>
-
-        <button 
-          className={`category-btn ${selectedCategory === 'Best Seller' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('Best Seller')}
-        >
-          Best Seller
-        </button>
-
-        <button 
-          className={`category-btn ${selectedCategory === 'About' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('About')}
-        >
-          About
-        </button>
       </div>
 
       <div className="products-grid">
