@@ -384,24 +384,19 @@
   text-transform: lowercase;
   font-size: 32px;
   color: #333;
+  display: block;
 }
 
 .product-modal-colors {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
+  display: none;
 }
 
 .modal-color-dot {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
+  display: none;
 }
 
 .modal-color-dot.active {
-  border-color: #111;
+  display: none;
 }
 
 .product-modal-sizes {
