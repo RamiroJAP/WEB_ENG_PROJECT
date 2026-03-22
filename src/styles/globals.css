@@ -273,6 +273,38 @@ body {
   flex-wrap: wrap;
 }
 
+.favorites-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.favorites-add-btn,
+.favorites-remove-btn {
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.favorites-add-btn {
+  background: #111;
+}
+
+.favorites-remove-btn {
+  background: #d62828;
+}
+
+.favorites-add-btn:hover,
+.favorites-remove-btn:hover {
+  opacity: 0.9;
+}
+
 .user-nav a {
   text-decoration: none;
   color: #f2f2f4;

@@ -21,9 +21,9 @@ export default function UserLayout({ children }) {
           Wolves Footwear Store
         </div>
         <nav className="user-nav">
-          <Link to="/user/home">Home</Link>
           <Link to="/user/shop">Shop</Link>
           <Link to="/user/about">About</Link>
+          <Link to="/user/favorites">Favorites</Link>
           <Link to="/user/orders">Order Tracker</Link>
           <Link to="/user/cart" className="cart-link">
             Cart <span className="cart-count">{getTotalItems()}</span>
