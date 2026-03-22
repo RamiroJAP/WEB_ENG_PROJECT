@@ -251,8 +251,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-bottom: 2px solid #333;
+  background: linear-gradient(135deg, #232326 0%, #3a3a40 100%);
+  border-bottom: 2px solid #4a4a52;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -262,7 +262,7 @@ body {
 .user-brand {
   font-weight: 800;
   font-size: 20px;
-  color: #333;
+  color: #f5f5f7;
   letter-spacing: 0.5px;
 }
 
@@ -275,7 +275,7 @@ body {
 
 .user-nav a {
   text-decoration: none;
-  color: #333;
+  color: #f2f2f4;
   font-weight: 600;
   font-size: 14px;
   transition: color 0.3s ease;
@@ -286,8 +286,8 @@ body {
 }
 
 .user-nav a:hover {
-  background: #333;
-  color: white;
+  background: #f5f5f7;
+  color: #242428;
 }
 
 .user-nav .cart-link {
@@ -312,9 +312,9 @@ body {
 }
 
 .user-info {
-  color: #666;
+  color: #d7d7dd;
   font-size: 13px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid #6a6a73;
   padding-left: 15px;
 }
 

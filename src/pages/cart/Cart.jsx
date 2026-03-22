@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
+import { useCheckout } from '../../context/CheckoutContext'
 import { useProducts } from '../../context/ProductsContext'
 import Receipt from './Receipt'
 import './Cart.css'
 
 export default function Cart() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart()
+  const { addCheckout } = useCheckout()
   const { products } = useProducts()
   const [showReceipt, setShowReceipt] = useState(false)
+  const [receiptData, setReceiptData] = useState(null)
 
   const getLivePrice = (item) => {
     const matchedProduct = products.find((product) => product.id === item.id)
@@ -33,17 +38,50 @@ export default function Cart() {
       alert('Your cart is empty!')
       return
     }
+
+    const receiptDate = new Date()
+    const receiptNumber = Math.random().toString(36).slice(2, 11).toUpperCase()
+    const customerName = user?.username || 'Shopper'
+    const customerEmail = user?.email || 'user@example.com'
+
+    const newCheckout = addCheckout({
+      customer: customerName,
+      email: customerEmail,
+      total: totalPrice,
+      items: cartWithLivePrices,
+      receiptNumber
+    })
+
+    setReceiptData({
+      receiptNumber,
+      receiptDate: receiptDate.toISOString(),
+      customerName,
+      customerEmail,
+      status: newCheckout.status
+    })
     setShowReceipt(true)
   }
 
   const handleReceiptClose = () => {
     setShowReceipt(false)
+    setReceiptData(null)
     clearCart()
-    navigate('/')
+    navigate('/user/shop')
   }
 
   if (showReceipt) {
-    return <Receipt cart={cartWithLivePrices} total={totalPrice} onClose={handleReceiptClose} />
+    return (
+      <Receipt
+        cart={cartWithLivePrices}
+        total={totalPrice}
+        onClose={handleReceiptClose}
+        receiptNumber={receiptData?.receiptNumber}
+        receiptDate={receiptData?.receiptDate}
+        customerName={receiptData?.customerName}
+        customerEmail={receiptData?.customerEmail}
+        orderStatus={receiptData?.status}
+      />
+    )
   }
 
   if (cartWithLivePrices.length === 0) {
@@ -52,7 +90,7 @@ export default function Cart() {
         <div className="empty-cart">
           <h1>Your Cart is Empty</h1>
           <p>Add some items to your cart and come back here!</p>
-          <button className="continue-shopping-btn" onClick={() => navigate('/shop')}>
+          <button className="continue-shopping-btn" onClick={() => navigate('/user/shop')}>
             Continue Shopping
           </button>
         </div>
@@ -116,7 +154,7 @@ export default function Cart() {
           <button className="checkout-btn" onClick={handleCheckout}>
             Proceed to Checkout
           </button>
-          <button className="continue-btn" onClick={() => navigate('/shop')}>
+          <button className="continue-btn" onClick={() => navigate('/user/shop')}>
             Continue Shopping
           </button>
           <button className="clear-btn" onClick={clearCart}>
