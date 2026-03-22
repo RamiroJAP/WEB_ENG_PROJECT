@@ -26,8 +26,7 @@ body {
   padding: var(--spacing-xl);
   background: var(--bg-white);
   border-bottom: 1px solid var(--border-medium);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
   box-shadow: var(--shadow-sm);
 }
@@ -172,8 +171,7 @@ body {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-bottom: 3px solid #333;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -253,8 +251,7 @@ body {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #232326 0%, #3a3a40 100%);
   border-bottom: 2px solid #4a4a52;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
