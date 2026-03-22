@@ -10,6 +10,8 @@ import About from './pages/about/About'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import CheckoutList from './pages/admin/CheckoutList'
 import Cart from './pages/cart/Cart'
+import CustomerHome from './pages/customer/CustomerHome'
+import OrderTracker from './pages/customer/OrderTracker'
 import Login from './pages/login/login'
 import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
@@ -35,12 +37,13 @@ export default function App() {
       return (
         <UserLayout>
           <Routes>
-            <Route path="/user/home" element={<Homepage />} />
+            <Route path="/user/home" element={<CustomerHome />} />
             <Route path="/user/shop" element={<Shop />} />
             <Route path="/user/about" element={<About />} />
+            <Route path="/user/orders" element={<OrderTracker />} />
             <Route path="/user/cart" element={<Cart />} />
-            <Route path="/" element={<Homepage />} />
-            <Route path="*" element={<Homepage />} />
+            <Route path="/" element={<CustomerHome />} />
+            <Route path="*" element={<CustomerHome />} />
           </Routes>
         </UserLayout>
       )

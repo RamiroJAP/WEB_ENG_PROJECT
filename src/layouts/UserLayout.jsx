@@ -24,6 +24,7 @@ export default function UserLayout({ children }) {
           <Link to="/user/home">Home</Link>
           <Link to="/user/shop">Shop</Link>
           <Link to="/user/about">About</Link>
+          <Link to="/user/orders">Order Tracker</Link>
           <Link to="/user/cart" className="cart-link">
             Cart <span className="cart-count">{getTotalItems()}</span>
           </Link>
