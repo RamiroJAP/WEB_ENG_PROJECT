@@ -21,8 +21,14 @@ export default function Favorites() {
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
                 <p className="product-price">₱{Number(product.price || 0).toLocaleString()}</p>
-                <button onClick={() => addToCart(product)}>Add to Cart</button>
-                <button onClick={() => removeFromFavorites(product.id)}>Remove</button>
+                <div className="favorites-actions">
+                  <button className="favorites-add-btn" onClick={() => addToCart(product)}>
+                    Add to Cart
+                  </button>
+                  <button className="favorites-remove-btn" onClick={() => removeFromFavorites(product.id)}>
+                    Remove
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -10,6 +10,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import CheckoutList from './pages/admin/CheckoutList'
 import Cart from './pages/cart/Cart'
 import OrderTracker from './pages/customer/OrderTracker'
+import Favorites from './pages/favorites/Favorites'
 import Login from './pages/login/login'
 import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/user/shop" element={<Shop />} />
             <Route path="/user/about" element={<About />} />
             <Route path="/user/orders" element={<OrderTracker />} />
+            <Route path="/user/favorites" element={<Favorites />} />
             <Route path="/user/cart" element={<Cart />} />
             <Route path="/" element={<Shop />} />
             <Route path="*" element={<Shop />} />

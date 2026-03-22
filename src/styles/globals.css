@@ -26,7 +26,8 @@ body {
   padding: var(--spacing-xl);
   background: var(--bg-white);
   border-bottom: 1px solid var(--border-medium);
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
 }
@@ -171,7 +172,8 @@ body {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   border-bottom: 3px solid #333;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -251,7 +253,8 @@ body {
   padding: 1rem 2rem;
   background: linear-gradient(135deg, #232326 0%, #3a3a40 100%);
   border-bottom: 2px solid #4a4a52;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -268,6 +271,38 @@ body {
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+.favorites-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.favorites-add-btn,
+.favorites-remove-btn {
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.favorites-add-btn {
+  background: #111;
+}
+
+.favorites-remove-btn {
+  background: #d62828;
+}
+
+.favorites-add-btn:hover,
+.favorites-remove-btn:hover {
+  opacity: 0.9;
 }
 
 .user-nav a {
