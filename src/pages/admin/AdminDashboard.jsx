@@ -144,7 +144,6 @@ export default function AdminDashboard(){
   return (
     <div className="admin-page">
       <div className="admin-header">
-        <input type="text" placeholder="Name of Store" className="store-name-input" />
         <button className="add-product-btn" onClick={handleAddProductClick}>
           <span>➕</span> Add New Product
         </button>
