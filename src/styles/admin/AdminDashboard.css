@@ -181,7 +181,7 @@
   padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.admin-header {
+.admin-page .admin-header {
   display: flex;
   justify-content: flex-end;
   align-items: center;
