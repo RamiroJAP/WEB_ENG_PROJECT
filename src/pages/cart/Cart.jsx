@@ -12,7 +12,7 @@ export default function Cart() {
   const { user } = useAuth()
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart()
   const { addCheckout } = useCheckout()
-  const { products } = useProducts()
+  const { products, reduceProductStocks } = useProducts()
   const [showReceipt, setShowReceipt] = useState(false)
   const [receiptData, setReceiptData] = useState(null)
 
@@ -36,6 +36,15 @@ export default function Cart() {
   const handleCheckout = () => {
     if (cartWithLivePrices.length === 0) {
       alert('Your cart is empty!')
+      return
+    }
+
+    const stockUpdateResult = reduceProductStocks(cartWithLivePrices)
+    if (!stockUpdateResult.success) {
+      const message = stockUpdateResult.insufficient
+        .map((item) => `${item.name}: requested ${item.requested}, available ${item.available}`)
+        .join('\n')
+      alert(`Some items do not have enough stock:\n${message}`)
       return
     }
 

@@ -20,10 +20,9 @@ export default function AdminLayout({ children }) {
           Wolves Footwear - Admin Panel
         </div>
         <nav className="admin-nav">
-          <Link to="/admin/dashboard">Dashboard</Link>
           <Link to="/admin/products">Products</Link>
+          <Link to="/admin/stocks">Stocks</Link>
           <Link to="/admin/checkouts">Checkout List</Link>
-          <Link to="/admin/users">Users</Link>
           <span className="admin-user-info">{user?.username}</span>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </nav>

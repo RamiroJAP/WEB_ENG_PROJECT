@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 
 const ProductsContext = createContext()
 const STORAGE_KEY = 'wolvesProducts'
+const DEFAULT_STOCK = 20
 
 const defaultProducts = [
   {
@@ -102,15 +103,29 @@ const defaultProducts = [
   }
 ]
 
+const normalizeStockValue = (value) => {
+  const numeric = Number(value)
+  if (!Number.isFinite(numeric) || numeric < 0) return DEFAULT_STOCK
+  return Math.floor(numeric)
+}
+
+const normalizeProduct = (product) => ({
+  ...product,
+  stock: normalizeStockValue(product.stock)
+})
+
 const getInitialProducts = () => {
   const saved = localStorage.getItem(STORAGE_KEY)
-  if (!saved) return defaultProducts
+  if (!saved) return defaultProducts.map(normalizeProduct)
 
   try {
     const parsed = JSON.parse(saved)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultProducts
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map(normalizeProduct)
+    }
+    return defaultProducts.map(normalizeProduct)
   } catch {
-    return defaultProducts
+    return defaultProducts.map(normalizeProduct)
   }
 }
 
@@ -127,10 +142,11 @@ export const ProductsProvider = ({ children }) => {
       rating: 4.0,
       price: 2999,
       category: 'casual',
+      stock: DEFAULT_STOCK,
       ...productData
     }
 
-    setProducts(prev => [newProduct, ...prev])
+    setProducts(prev => [normalizeProduct(newProduct), ...prev])
     return newProduct
   }
 
@@ -138,8 +154,50 @@ export const ProductsProvider = ({ children }) => {
     setProducts(prev => prev.filter(product => product.id !== productId))
   }
 
+  const reduceProductStocks = (cartItems) => {
+    let updateResult = { success: true, insufficient: [] }
+
+    setProducts(prevProducts => {
+      const requestedById = cartItems.reduce((acc, item) => {
+        const quantity = Number(item.quantity) || 0
+        if (quantity > 0) {
+          acc[item.id] = (acc[item.id] || 0) + quantity
+        }
+        return acc
+      }, {})
+
+      const insufficient = prevProducts
+        .filter(product => requestedById[product.id])
+        .filter(product => requestedById[product.id] > normalizeStockValue(product.stock))
+        .map(product => ({
+          id: product.id,
+          name: product.name,
+          requested: requestedById[product.id],
+          available: normalizeStockValue(product.stock)
+        }))
+
+      if (insufficient.length > 0) {
+        updateResult = { success: false, insufficient }
+        return prevProducts
+      }
+
+      return prevProducts.map(product => {
+        const requested = requestedById[product.id] || 0
+        if (!requested) return product
+
+        const currentStock = normalizeStockValue(product.stock)
+        return {
+          ...product,
+          stock: Math.max(0, currentStock - requested)
+        }
+      })
+    })
+
+    return updateResult
+  }
+
   return (
-    <ProductsContext.Provider value={{ products, addProduct, removeProduct }}>
+    <ProductsContext.Provider value={{ products, addProduct, removeProduct, reduceProductStocks }}>
       {children}
     </ProductsContext.Provider>
   )
