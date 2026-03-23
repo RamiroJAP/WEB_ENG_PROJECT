@@ -67,8 +67,8 @@ export default function ReceiptModal({ checkoutId, onClose }) {
                   <tr key={item.id}>
                     <td className="receipt-product-name">{item.name}</td>
                     <td className="receipt-td-center">{item.quantity}</td>
-                    <td className="receipt-td-right">₹{item.price}</td>
-                    <td className="receipt-td-right">₹{(item.price * item.quantity).toFixed(2)}</td>
+                    <td className="receipt-td-right">₱{Number(item.price || 0).toLocaleString()}</td>
+                    <td className="receipt-td-right">₱{Number((item.price || 0) * (item.quantity || 0)).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -81,15 +81,11 @@ export default function ReceiptModal({ checkoutId, onClose }) {
           <div className="receipt-summary-section">
             <div className="receipt-summary-row">
               <span>Subtotal:</span>
-              <span>₹{checkout.total.toFixed(2)}</span>
-            </div>
-            <div className="receipt-summary-row">
-              <span>Shipping:</span>
-              <span>FREE</span>
+              <span>₱{Number(checkout.total || 0).toLocaleString()}</span>
             </div>
             <div className="receipt-summary-row receipt-total">
               <span>TOTAL AMOUNT:</span>
-              <span>₹{checkout.total.toFixed(2)}</span>
+              <span>₱{Number(checkout.total || 0).toLocaleString()}</span>
             </div>
           </div>
 
