@@ -11,8 +11,7 @@ export default function Shop() {
   const [selectedType, setSelectedType] = useState('all')
   const [selectedPrice, setSelectedPrice] = useState('all')
   const [activeProduct, setActiveProduct] = useState(null)
-  const [selectedSize, setSelectedSize] = useState('40')
-  const [selectedColor, setSelectedColor] = useState('#111111')
+  const [selectedSize, setSelectedSize] = useState('')
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewComment, setReviewComment] = useState('')
   const [reviewsByProduct, setReviewsByProduct] = useState(() => {
@@ -43,10 +42,34 @@ export default function Shop() {
     return Number((total / reviews.length).toFixed(1))
   }
 
+  const getProductSizes = (product) => {
+    const raw = product?.size
+
+    if (Array.isArray(raw)) {
+      const cleaned = raw.map((size) => String(size).trim()).filter(Boolean)
+      return cleaned.length > 0 ? cleaned : ['39', '40', '41', '42', '43']
+    }
+
+    if (typeof raw === 'number') {
+      return [String(raw)]
+    }
+
+    if (typeof raw === 'string') {
+      const cleaned = raw
+        .split(/[\s,\/|;-]+/)
+        .map((size) => size.trim())
+        .filter(Boolean)
+
+      return cleaned.length > 0 ? cleaned : ['39', '40', '41', '42', '43']
+    }
+
+    return ['39', '40', '41', '42', '43']
+  }
+
   const openProductDetails = (product) => {
+    const productSizes = getProductSizes(product)
     setActiveProduct(product)
-    setSelectedColor(product.color || '#111111')
-    setSelectedSize('40')
+    setSelectedSize(productSizes[0])
     setReviewRating(5)
     setReviewComment('')
   }
@@ -94,6 +117,31 @@ export default function Shop() {
     const normalizedType = (product.type || product.category || '').toLowerCase()
     const validTypes = ['running', 'casual', 'basketball', 'slippers', 'sandals']
     return validTypes.includes(normalizedType) ? normalizedType : 'casual'
+  }
+
+  const getProductColorLabel = (color) => {
+    if (!color || typeof color !== 'string') return 'N/A'
+
+    const normalized = color.trim()
+    const colorNameByHex = {
+      '#FF0000': 'Red',
+      '#FFFFFF': 'White',
+      '#9B59B6': 'Purple',
+      '#000000': 'Black',
+      '#8B4513': 'Brown',
+      '#FFD700': 'Yellow',
+      '#007BFF': 'Blue',
+      '#28A745': 'Green',
+      '#FF69B4': 'Pink',
+      '#8A2BE2': 'Violet'
+    }
+
+    const upperHex = normalized.toUpperCase()
+    if (colorNameByHex[upperHex]) {
+      return colorNameByHex[upperHex]
+    }
+
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1).toLowerCase()
   }
 
   // Filter products
@@ -275,6 +323,7 @@ export default function Shop() {
             {(() => {
               const activeReviews = getProductReviews(activeProduct.id)
               const activeAverageRating = getAverageRating(activeProduct.id, activeProduct.rating || 4)
+              const activeSizes = getProductSizes(activeProduct)
               return (
                 <>
             <button className="product-modal-close" onClick={closeProductDetails}>×</button>
@@ -335,21 +384,19 @@ export default function Shop() {
               <div className="product-modal-info">
                 <h2>{activeProduct.name}</h2>
                 <p className="product-modal-price">Price: ₱{Number(activeProduct.price || 0).toLocaleString()}</p>
-                <p className="product-modal-label">colors</p>
-                <div className="product-modal-colors">
-                  {['#2b0f0f', '#d40f0f', '#6fbe31'].map(color => (
-                    <button
-                      key={color}
-                      className={`modal-color-dot ${selectedColor === color ? 'active' : ''}`}
-                      style={{ backgroundColor: color }}
-                      onClick={() => setSelectedColor(color)}
-                    />
-                  ))}
+
+                <p className="product-modal-label color-label">color</p>
+                <div className="product-modal-color-display">
+                  <span
+                    className="modal-color-dot-preview"
+                    style={{ backgroundColor: activeProduct.color || '#cfcfcf' }}
+                  />
+                  <span className="product-modal-color-text">{getProductColorLabel(activeProduct.color)}</span>
                 </div>
 
-                <p className="product-modal-label">size</p>
+                <p className="product-modal-label size-label">size</p>
                 <div className="product-modal-sizes">
-                  {['39', '40', '41', '42', '43'].map(size => (
+                  {activeSizes.map(size => (
                     <button
                       key={size}
                       className={`modal-size-btn ${selectedSize === size ? 'active' : ''}`}
@@ -362,7 +409,7 @@ export default function Shop() {
 
                 <button
                   className="product-modal-action"
-                  onClick={() => addToCart({ ...activeProduct, selectedSize, selectedColor })}
+                  onClick={() => addToCart({ ...activeProduct, selectedSize: selectedSize || activeSizes[0] || '' })}
                 >
                   Add to Cart
                 </button>
