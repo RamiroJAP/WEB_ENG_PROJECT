@@ -13,7 +13,8 @@ const defaultCheckouts = [
     items: [
       { id: 1, name: 'Product 1', quantity: 2, price: 2999 }
     ],
-    receiptNumber: 'RCP001'
+    receiptNumber: 'RCP001',
+    stockDeducted: false
   },
   { 
     id: 2, 
@@ -25,7 +26,8 @@ const defaultCheckouts = [
     items: [
       { id: 2, name: 'Product 2', quantity: 1, price: 3500 }
     ],
-    receiptNumber: 'RCP002'
+    receiptNumber: 'RCP002',
+    stockDeducted: true
   },
   { 
     id: 3, 
@@ -37,26 +39,48 @@ const defaultCheckouts = [
     items: [
       { id: 3, name: 'Product 3', quantity: 1, price: 8999 }
     ],
-    receiptNumber: 'RCP003'
+    receiptNumber: 'RCP003',
+    stockDeducted: false
   },
   { 
     id: 4, 
     customer: 'Sarah Williams', 
     email: 'sarah@example.com', 
     total: 4299, 
-    status: 'Shipped', 
+    status: 'Pick Up', 
     date: '2026-02-21',
     items: [
       { id: 4, name: 'Product 4', quantity: 1, price: 4299 }
     ],
-    receiptNumber: 'RCP004'
+    receiptNumber: 'RCP004',
+    stockDeducted: false
   },
 ]
+
+const normalizeStatus = (status) => (status === 'Shipped' ? 'Pick Up' : status)
+
+const normalizeCheckout = (checkout) => {
+  const normalizedStatus = normalizeStatus(checkout.status)
+  const hasStockDeducted = typeof checkout.stockDeducted === 'boolean'
+
+  return {
+    ...checkout,
+    status: normalizedStatus,
+    stockDeducted: hasStockDeducted ? checkout.stockDeducted : normalizedStatus === 'Completed'
+  }
+}
 
 export const CheckoutProvider = ({ children }) => {
   const [checkouts, setCheckouts] = useState(() => {
     const savedCheckouts = localStorage.getItem('checkouts')
-    return savedCheckouts ? JSON.parse(savedCheckouts) : defaultCheckouts
+    if (!savedCheckouts) return defaultCheckouts
+
+    try {
+      const parsed = JSON.parse(savedCheckouts)
+      return Array.isArray(parsed) ? parsed.map(normalizeCheckout) : defaultCheckouts
+    } catch {
+      return defaultCheckouts
+    }
   })
 
   // Save to localStorage whenever checkouts change
@@ -69,15 +93,16 @@ export const CheckoutProvider = ({ children }) => {
       id: checkouts.length + 1,
       ...checkoutData,
       status: 'Pending',
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      stockDeducted: false
     }
     setCheckouts([newCheckout, ...checkouts])
     return newCheckout
   }
 
-  const updateCheckoutStatus = (id, newStatus) => {
+  const updateCheckoutStatus = (id, newStatus, extraUpdates = {}) => {
     setCheckouts(checkouts.map(c =>
-      c.id === id ? { ...c, status: newStatus } : c
+      c.id === id ? { ...c, status: newStatus, ...extraUpdates } : c
     ))
   }
 

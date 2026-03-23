@@ -6,6 +6,7 @@ import '../../styles/user/CustomerHome.css'
 export default function OrderTracker() {
   const { user } = useAuth()
   const { checkouts } = useCheckout()
+  const getStatusClass = (status) => (status || 'Pending').toLowerCase().replace(/\s+/g, '-')
 
   const userOrders = React.useMemo(() => {
     const normalizedUsername = (user?.username || '').trim().toLowerCase()
@@ -24,8 +25,8 @@ export default function OrderTracker() {
     switch (status) {
       case 'Completed':
         return 'Ready to pick up.'
-      case 'Shipped':
-        return 'On the way to your address.'
+      case 'Pick Up':
+        return 'Ready for customer pickup.'
       case 'Cancelled':
         return 'Order was cancelled. Please contact support if needed.'
       default:
@@ -59,7 +60,7 @@ export default function OrderTracker() {
                       <td>{order.date}</td>
                       <td>₱{Number(order.total || 0).toLocaleString()}</td>
                       <td>
-                        <span className={`order-status ${(order.status || 'Pending').toLowerCase()}`}>
+                        <span className={`order-status ${getStatusClass(order.status)}`}>
                           {order.status || 'Pending'}
                         </span>
                       </td>

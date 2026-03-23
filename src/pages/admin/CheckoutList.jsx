@@ -1,18 +1,43 @@
 import React, { useState } from 'react'
 import { useCheckout } from '../../context/CheckoutContext'
+import { useProducts } from '../../context/ProductsContext'
 import ReceiptModal from './ReceiptModal'
 import '../../styles/admin/CheckoutList.css'
 
 export default function CheckoutList() {
   const { checkouts, updateCheckoutStatus, deleteCheckout } = useCheckout()
+  const { reduceProductStocks } = useProducts()
   const [filterStatus, setFilterStatus] = useState('All')
   const [selectedCheckoutId, setSelectedCheckoutId] = useState(null)
+
+  const getStatusClass = (status) => (status || 'pending').toLowerCase().replace(/\s+/g, '-')
 
   const filteredCheckouts = filterStatus === 'All' 
     ? checkouts 
     : checkouts.filter(c => c.status === filterStatus)
 
   const handleStatusChange = (id, newStatus) => {
+    const checkout = checkouts.find((item) => item.id === id)
+    if (!checkout) return
+
+    const isCompleting = newStatus === 'Completed'
+    const needsStockDeduction = isCompleting && !checkout.stockDeducted
+
+    if (needsStockDeduction) {
+      const stockUpdateResult = reduceProductStocks(checkout.items || [])
+
+      if (!stockUpdateResult.success) {
+        const message = stockUpdateResult.insufficient
+          .map((item) => `${item.name}: requested ${item.requested}, available ${item.available}`)
+          .join('\n')
+        alert(`Cannot mark this order as Completed due to low stock:\n${message}`)
+        return
+      }
+
+      updateCheckoutStatus(id, newStatus, { stockDeducted: true })
+      return
+    }
+
     updateCheckoutStatus(id, newStatus)
   }
 
@@ -40,7 +65,7 @@ export default function CheckoutList() {
           <option>All</option>
           <option>Pending</option>
           <option>Completed</option>
-          <option>Shipped</option>
+          <option>Pick Up</option>
           <option>Cancelled</option>
         </select>
       </div>
@@ -69,11 +94,11 @@ export default function CheckoutList() {
                   <select 
                     value={checkout.status} 
                     onChange={(e) => handleStatusChange(checkout.id, e.target.value)}
-                    className={`status-select status-${checkout.status.toLowerCase()}`}
+                    className={`status-select status-${getStatusClass(checkout.status)}`}
                   >
                     <option>Pending</option>
                     <option>Completed</option>
-                    <option>Shipped</option>
+                    <option>Pick Up</option>
                     <option>Cancelled</option>
                   </select>
                 </td>

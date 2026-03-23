@@ -8,6 +8,7 @@ import Shop from './pages/shop/Shop'
 import About from './pages/about/About'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import CheckoutList from './pages/admin/CheckoutList'
+import Stocks from './pages/admin/Stocks.jsx'
 import Cart from './pages/cart/Cart'
 import OrderTracker from './pages/customer/OrderTracker'
 import Favorites from './pages/favorites/Favorites'
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/checkouts" element={<CheckoutList />} />
             <Route path="/admin/products" element={<AdminDashboard />} />
+            <Route path="/admin/stocks" element={<Stocks />} />
             <Route path="/admin/users" element={<AdminDashboard />} />
             <Route path="*" element={<AdminDashboard />} />
           </Routes>
