@@ -399,6 +399,28 @@
   display: none;
 }
 
+.product-modal-color-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.modal-color-dot-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #bcbcbc;
+  display: inline-block;
+}
+
+.product-modal-color-text {
+  font-size: 30px;
+  line-height: 1;
+  color: #222;
+  text-transform: capitalize;
+}
+
 .product-modal-sizes {
   display: flex;
   gap: 8px;
