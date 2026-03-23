@@ -149,10 +149,11 @@ export default function Shop() {
     const audienceMatch =
       selectedAudience === 'all' || getAudienceCategory(product.audience) === selectedAudience
     const typeMatch = selectedType === 'all' || getProductType(product) === selectedType
+    const numericPrice = Number(product.price || 0)
     const priceMatch = selectedPrice === 'all' || 
-      (selectedPrice === 'budget' && product.price <= 3500) ||
-      (selectedPrice === 'mid' && product.price > 3500 && product.price <= 4500) ||
-      (selectedPrice === 'premium' && product.price > 4500)
+      (selectedPrice === 'budget' && numericPrice <= 140) ||
+      (selectedPrice === 'mid' && numericPrice >= 250 && numericPrice <= 400) ||
+      (selectedPrice === 'premium' && numericPrice > 800)
     return audienceMatch && typeMatch && priceMatch
   })
 
@@ -231,19 +232,19 @@ export default function Shop() {
                 className={`filter-btn-small ${selectedPrice === 'budget' ? 'active' : ''}`}
                 onClick={() => setSelectedPrice('budget')}
               >
-                Up to ₱3,500
+                Up to ₱140
               </button>
               <button 
                 className={`filter-btn-small ${selectedPrice === 'mid' ? 'active' : ''}`}
                 onClick={() => setSelectedPrice('mid')}
               >
-                ₱3,500 - ₱4,500
+                ₱250 - ₱400
               </button>
               <button 
                 className={`filter-btn-small ${selectedPrice === 'premium' ? 'active' : ''}`}
                 onClick={() => setSelectedPrice('premium')}
               >
-                Above ₱4,500
+                Above ₱800
               </button>
             </div>
           </div>
