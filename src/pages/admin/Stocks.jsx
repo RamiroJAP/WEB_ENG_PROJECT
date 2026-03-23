@@ -8,6 +8,13 @@ const CRITICAL_STOCK_THRESHOLD = 2
 export default function Stocks() {
   const { products } = useProducts()
 
+  const getProductColor = (color) => {
+    if (typeof color === 'string' && color.trim() !== '') {
+      return color
+    }
+    return '#9ca3af'
+  }
+
   const sortedProducts = [...products].sort(
     (a, b) => Number(a.stock || 0) - Number(b.stock || 0)
   )
@@ -58,6 +65,7 @@ export default function Stocks() {
             <tr>
               <th>Product</th>
               <th>Category</th>
+              <th>Color</th>
               <th>Stock</th>
               <th>Status</th>
             </tr>
@@ -66,10 +74,21 @@ export default function Stocks() {
             {sortedProducts.map((product) => {
               const stock = Number(product.stock || 0)
               const status = getStockStatus(stock)
+              const productColor = getProductColor(product.color)
               return (
                 <tr key={product.id}>
                   <td>{product.name}</td>
                   <td>{product.category || 'N/A'}</td>
+                  <td>
+                    <div className="stock-color-cell">
+                      <span
+                        className="stock-color-dot"
+                        style={{ backgroundColor: productColor }}
+                        title={product.color || 'No color'}
+                      />
+                      <span className="stock-color-value">{product.color || 'N/A'}</span>
+                    </div>
+                  </td>
                   <td>{stock}</td>
                   <td>
                     <span className={`stock-status ${status.className}`}>{status.label}</span>

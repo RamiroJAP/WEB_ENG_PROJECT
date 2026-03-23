@@ -183,22 +183,13 @@
 
 .admin-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: var(--spacing-lg);
   background: var(--bg-white);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-sm);
-}
-
-.store-name-input {
-  padding: 8px 12px;
-  border: 1px solid var(--border-medium);
-  border-radius: var(--border-radius-sm);
-  font-size: 14px;
-  flex: 1;
-  margin-right: var(--spacing-lg);
 }
 
 .add-product-btn {
