@@ -5,6 +5,18 @@ import { useProducts } from '../../context/ProductsContext'
 export default function AdminDashboard(){
   const { products, addProduct, removeProduct } = useProducts()
 
+  const colorOptions = [
+    { name: 'Red', value: '#FF0000' },
+    { name: 'White', value: '#FFFFFF' },
+    { name: 'Purple', value: '#9B59B6' },
+    { name: 'Black', value: '#000000' },
+    { name: 'Brown', value: '#8B4513' },
+    { name: 'Yellow', value: '#FFD700' },
+    { name: 'Blue', value: '#007BFF' },
+    { name: 'Green', value: '#28A745' },
+    { name: 'Pink', value: '#FF69B4' }
+  ]
+
   const [selectedAudience, setSelectedAudience] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
   const [showAddProductModal, setShowAddProductModal] = useState(false)
@@ -12,6 +24,7 @@ export default function AdminDashboard(){
     name: '',
     category: 'Running',
     audience: 'Men',
+    stock: '',
     price: '',
     color: '#FF0000',
     size: '',
@@ -48,7 +61,7 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', category: 'Running', audience: 'Men', price: '', color: '#FF0000', size: '', image: null })
+    setNewProduct({ name: '', category: 'Running', audience: 'Men', stock: '', price: '', color: '#FF0000', size: '', image: null })
     setDragActive(false)
   }
 
@@ -103,19 +116,24 @@ export default function AdminDashboard(){
 
   const handleSaveProduct = () => {
     const parsedPrice = Number(newProduct.price)
+    const parsedStock = Number(newProduct.stock)
+    const isValidStock = Number.isInteger(parsedStock) && parsedStock >= 0
 
-    if (newProduct.name && newProduct.size && newProduct.category && newProduct.audience && parsedPrice > 0) {
+    if (newProduct.name && newProduct.size && newProduct.category && newProduct.audience && newProduct.stock !== '' && isValidStock && parsedPrice > 0) {
       addProduct({
         name: newProduct.name,
         image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
         category: newProduct.category,
         audience: newProduct.audience,
+        stock: parsedStock,
+        color: newProduct.color,
+        size: newProduct.size,
         price: parsedPrice,
         rating: 4.0
       })
       handleCloseModal()
     } else {
-      alert('Please fill in all fields and enter a valid price')
+      alert('Please fill in all fields and enter valid stock and price values')
     }
   }
 
@@ -283,26 +301,18 @@ export default function AdminDashboard(){
               <div className="form-group">
                 <label>ADD COLOR:</label>
                 <div className="color-picker">
-                  <button 
-                    className={`color-btn ${newProduct.color === '#FF0000' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#FF0000')}
-                    style={{ backgroundColor: '#FF0000' }}
-                  />
-                  <button
-                    className={`color-btn ${newProduct.color === '#FFFFFF' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#FFFFFF')}
-                    style={{ backgroundColor: '#FFFFFF' }}
-                  />
-                  <button 
-                    className={`color-btn ${newProduct.color === '#9B59B6' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#9B59B6')}
-                    style={{ backgroundColor: '#9B59B6' }}
-                  />
-                  <button 
-                    className={`color-btn ${newProduct.color === '#000000' ? 'active' : ''}`}
-                    onClick={() => handleColorChange('#000000')}
-                    style={{ backgroundColor: '#000000' }}
-                  />
+                  {colorOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      className={`color-btn ${newProduct.color === option.value ? 'active' : ''}`}
+                      onClick={() => handleColorChange(option.value)}
+                      style={{ backgroundColor: option.value }}
+                      title={option.name}
+                      aria-label={option.name}
+                    >
+                      <span className="sr-only">{option.name}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -313,6 +323,20 @@ export default function AdminDashboard(){
                   name="size"
                   placeholder=""
                   value={newProduct.size}
+                  onChange={handleInputChange}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>ADD STOCKS:</label>
+                <input
+                  type="number"
+                  name="stock"
+                  min="0"
+                  step="1"
+                  placeholder="Enter stock quantity"
+                  value={newProduct.stock}
                   onChange={handleInputChange}
                   className="form-input"
                 />
