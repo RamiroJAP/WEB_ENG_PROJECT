@@ -148,12 +148,33 @@ export default function AdminDashboard(){
   }
 
   const handleUpload = async () => {
-    if (!newProduct.imageFile) return
+    if (!newProduct.imageFile) {
+      if (import.meta.env.DEV) {
+        console.warn('[AdminDashboard] Upload clicked but no file selected')
+      }
+      alert('Please select an image first')
+      return
+    }
 
     try {
       setIsUploading(true)
 
-      const imageUrl = await uploadImageToCloudinary(newProduct.imageFile)
+      if (import.meta.env.DEV) {
+        console.log('[AdminDashboard] Starting upload...')
+        console.log(
+          '[AdminDashboard] VITE_CLOUDINARY_CLOUD_NAME:',
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        )
+        console.log(
+          '[AdminDashboard] VITE_CLOUDINARY_UPLOAD_PRESET:',
+          import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+        )
+      }
+
+      const imageUrl = await uploadImageToCloudinary(newProduct.imageFile, {
+        cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      })
 
       setNewProduct({
         ...newProduct,
@@ -174,6 +195,11 @@ export default function AdminDashboard(){
         )
       }
     } catch (err) {
+      if (import.meta.env.DEV) {
+        console.error('[AdminDashboard] Upload failed:', err)
+        console.error('[AdminDashboard] Upload failed message:', err?.message)
+        console.error('[AdminDashboard] Upload failed stack:', err?.stack)
+      }
       alert(err?.message || 'Upload failed')
     } finally {
       setIsUploading(false)

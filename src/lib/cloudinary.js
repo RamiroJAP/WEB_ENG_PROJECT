@@ -1,7 +1,23 @@
 const getRequiredEnv = (key) => {
-  const value = import.meta?.env?.[key]
+  const env = import.meta?.env
+  let value
+
+  switch (key) {
+    case 'VITE_CLOUDINARY_CLOUD_NAME':
+      value = env?.VITE_CLOUDINARY_CLOUD_NAME
+      break
+    case 'VITE_CLOUDINARY_UPLOAD_PRESET':
+      value = env?.VITE_CLOUDINARY_UPLOAD_PRESET
+      break
+    default:
+      value = env?.[key]
+      break
+  }
+
   if (!value) {
-    throw new Error(`Missing required env var: ${key}`)
+    const viteKeys = Object.keys(env || {}).filter((k) => k.startsWith('VITE_'))
+    const hint = viteKeys.length ? ` (VITE_ keys loaded: ${viteKeys.join(', ')})` : ''
+    throw new Error(`Missing required env var: ${key}${hint}`)
   }
   return value
 }
@@ -19,13 +35,19 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
   formData.append('file', file)
   formData.append('upload_preset', uploadPreset)
 
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-    {
+  const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
+  let res
+  try {
+    res = await fetch(endpoint, {
       method: 'POST',
       body: formData
-    }
-  )
+    })
+  } catch (networkErr) {
+    const message =
+      (networkErr && (networkErr.message || networkErr.toString?.())) ||
+      'unknown network error'
+    throw new Error(`Cloudinary request failed: ${message}`)
+  }
 
   const data = await res.json().catch(() => null)
 
@@ -33,7 +55,7 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
     const message =
       (data && (data.error?.message || data.error?.toString?.())) ||
       `Cloudinary upload failed (${res.status})`
-    throw new Error(message)
+    throw new Error(`${message} [endpoint=${endpoint}, preset=${uploadPreset}]`)
   }
 
   if (!data?.secure_url) {
