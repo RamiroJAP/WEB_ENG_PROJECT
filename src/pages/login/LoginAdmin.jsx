@@ -5,10 +5,10 @@ import '../../styles/admin/LoginAdmin.css'
 
 export default function LoginAdmin() {
   const navigate = useNavigate()
-  const { loginWithEmail } = useAuth()
+  const { login } = useAuth()
   const [message, setMessage] = useState('')
   const [loginData, setLoginData] = useState({
-    email: '',
+    username: '',
     password: ''
   })
 
@@ -21,25 +21,37 @@ export default function LoginAdmin() {
 
   const handleLogin = (e) => {
     e.preventDefault()
-    if (!loginData.email || !loginData.password) {
+    if (!loginData.username || !loginData.password) {
       alert('Please fill in all fields')
       setMessage('Please fill in all fields')
       return
     }
+    
+    // Check if user exists
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const foundUser = users.find(u => 
+      (u.username === loginData.username || u.email === loginData.username) && 
+      u.password === loginData.password &&
+      u.userType === 'admin'
+    )
 
-    loginWithEmail(loginData.email, loginData.password, 'admin')
-      .then(() => {
-        alert('Login successful! Welcome admin!')
-        setMessage('Login successful! Redirecting...')
-        setLoginData({ email: '', password: '' })
-        setTimeout(() => {
-          navigate('/admin')
-        }, 1200)
+    if (foundUser) {
+      alert('Login successful! Welcome admin!')
+      login({
+        id: foundUser.id,
+        username: foundUser.username,
+        email: foundUser.email,
+        userType: 'admin'
       })
-      .catch((error) => {
-        alert('Invalid admin credentials')
-        setMessage(error.message || 'Invalid admin credentials')
-      })
+      setMessage('Login successful! Redirecting...')
+      setLoginData({ username: '', password: '' })
+      setTimeout(() => {
+        navigate('/admin')
+      }, 1500)
+    } else {
+      alert('Invalid username or password')
+      setMessage('Invalid username or password')
+    }
   }
 
   return (
@@ -55,13 +67,13 @@ export default function LoginAdmin() {
           {message && <div className="message-box error">{message}</div>}
 
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">Username</label>
             <div className="input-wrapper">
-              <span className="input-icon">✉️</span>
+              <span className="input-icon">👤</span>
               <input
-                type="email"
-                name="email"
-                value={loginData.email}
+                type="text"
+                name="username"
+                value={loginData.username}
                 onChange={handleLoginChange}
                 className="form-input"
               />
