@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import '../../styles/user/LoginUser.css'
 
@@ -172,7 +172,7 @@ export default function LoginUser() {
                 </div>
               </div>
 
-              <a href="#" className="forgot-password">Forgot Password</a>
+              <Link to="/login/user/forgot-password" className="forgot-password">Forgot Password</Link>
 
               <button type="submit" className="login-btn">Login</button>
 

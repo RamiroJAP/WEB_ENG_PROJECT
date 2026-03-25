@@ -32,6 +32,26 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('currentUser')
   }
 
+  const resetUserPassword = (email, newPassword) => {
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const userIndex = users.findIndex(
+      (u) => u.userType === 'user' && (u.email || '').toLowerCase() === normalizedEmail
+    )
+
+    if (userIndex === -1) {
+      return { success: false, message: 'Email not found for a user account' }
+    }
+
+    users[userIndex] = {
+      ...users[userIndex],
+      password: newPassword
+    }
+    localStorage.setItem('users', JSON.stringify(users))
+
+    return { success: true, message: 'Password updated successfully. Please log in.' }
+  }
+
   // Check if user was logged in before (on app load)
   React.useEffect(() => {
     ensureDefaultAdmin()
@@ -43,7 +63,7 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, resetUserPassword }}>
       {children}
     </AuthContext.Provider>
   )

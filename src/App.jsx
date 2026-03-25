@@ -15,6 +15,7 @@ import Favorites from './pages/favorites/Favorites'
 import Login from './pages/login/login'
 import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
+import ForgotPasswordUser from './pages/login/ForgotPasswordUser'
 
 export default function App() {
   const { user } = useAuth()
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/login/admin" element={<LoginAdmin />} />
           <Route path="/login/user" element={<LoginUser />} />
+          <Route path="/login/user/forgot-password" element={<ForgotPasswordUser />} />
           <Route path="*" element={<Shop />} />
         </Routes>
       </main>
