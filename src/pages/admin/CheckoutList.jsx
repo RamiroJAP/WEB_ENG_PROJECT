@@ -16,7 +16,7 @@ export default function CheckoutList() {
     ? checkouts 
     : checkouts.filter(c => c.status === filterStatus)
 
-  const handleStatusChange = (id, newStatus) => {
+  const handleStatusChange = async (id, newStatus) => {
     const checkout = checkouts.find((item) => item.id === id)
     if (!checkout) return
 
@@ -24,7 +24,7 @@ export default function CheckoutList() {
     const needsStockDeduction = isCompleting && !checkout.stockDeducted
 
     if (needsStockDeduction) {
-      const stockUpdateResult = reduceProductStocks(checkout.items || [])
+      const stockUpdateResult = await reduceProductStocks(checkout.items || [])
 
       if (!stockUpdateResult.success) {
         const message = stockUpdateResult.insufficient

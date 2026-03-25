@@ -210,7 +210,7 @@ export default function AdminDashboard(){
     fileInputRef.current?.click()
   }
 
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     const parsedPrice = Number(newProduct.price)
     const parsedStock = Number(newProduct.stock)
     const isValidStock = Number.isInteger(parsedStock) && parsedStock >= 0
@@ -221,25 +221,33 @@ export default function AdminDashboard(){
     }
 
     if (newProduct.name && newProduct.size && newProduct.category && newProduct.audience && newProduct.stock !== '' && isValidStock && parsedPrice > 0) {
-      addProduct({
-        name: newProduct.name,
-        image: newProduct.imageUrl || 'https://via.placeholder.com/300x300?text=New+Product',
-        category: newProduct.category,
-        audience: newProduct.audience,
-        stock: parsedStock,
-        color: newProduct.color,
-        size: newProduct.size,
-        price: parsedPrice,
-        rating: 4.0
-      })
-      handleCloseModal()
+      try {
+        await addProduct({
+          name: newProduct.name,
+          image: newProduct.imageUrl || 'https://via.placeholder.com/300x300?text=New+Product',
+          category: newProduct.category,
+          audience: newProduct.audience,
+          stock: parsedStock,
+          color: newProduct.color,
+          size: newProduct.size,
+          price: parsedPrice,
+          rating: 4.0
+        })
+        handleCloseModal()
+      } catch (err) {
+        alert(err?.message || 'Failed to save product')
+      }
     } else {
       alert('Please fill in all fields and enter valid stock and price values')
     }
   }
 
-  const handleDeleteProduct = (productId) => {
-    removeProduct(productId)
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await removeProduct(productId)
+    } catch (err) {
+      alert(err?.message || 'Failed to delete product')
+    }
   }
 
   return (

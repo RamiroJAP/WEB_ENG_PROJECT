@@ -12,7 +12,42 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if true;
-      allow create, update, delete: if isSignedIn();
+
+      function isValidProductWrite() {
+        return request.resource.data.keys().hasOnly([
+          'name',
+          'image',
+          'category',
+          'audience',
+          'stock',
+          'color',
+          'size',
+          'price',
+          'rating',
+          'createdAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.image is string
+        && request.resource.data.image.size() > 0
+        && request.resource.data.category is string
+        && request.resource.data.audience is string
+        && request.resource.data.size is string
+        && request.resource.data.color is string
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.price is number
+        && request.resource.data.price > 0
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 0
+        && request.resource.data.createdAt is timestamp;
+      }
+
+      // NOTE: This is open (no Firebase Auth) because the app uses local auth.
+      // If you later switch to Firebase Auth, we should lock this down.
+      allow create: if isValidProductWrite();
+      allow update: if isValidProductWrite() && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if true;
     }
 
     match /users/{userId} {

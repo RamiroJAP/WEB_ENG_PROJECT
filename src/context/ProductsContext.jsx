@@ -1,7 +1,16 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+  writeBatch
+} from 'firebase/firestore'
+import { db } from '../firebase'
 
 const ProductsContext = createContext()
-const STORAGE_KEY = 'wolvesProducts'
 const DEFAULT_STOCK = 20
 
 const normalizeStockValue = (value) => {
@@ -15,103 +24,119 @@ const normalizeProduct = (product) => ({
   stock: normalizeStockValue(product.stock)
 })
 
-const isLegacyDefaultProduct = (product) => {
-  if (!product || typeof product !== 'object') return false
-
-  const defaultIds = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-  const looksLikeSeedById = defaultIds.has(Number(product.id))
-  const looksLikeSeedImage =
-    typeof product.image === 'string' && product.image.startsWith('https://via.placeholder.com/300x300?text=')
-
-  return looksLikeSeedById || looksLikeSeedImage
-}
-
-const getInitialProducts = () => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (!saved) return []
-
-  try {
-    const parsed = JSON.parse(saved)
-    if (Array.isArray(parsed)) {
-      return parsed
-        .filter((product) => !isLegacyDefaultProduct(product))
-        .map(normalizeProduct)
-    }
-    return []
-  } catch {
-    return []
-  }
-}
-
 export const ProductsProvider = ({ children }) => {
-  const [products, setProducts] = useState(getInitialProducts)
+  const [products, setProducts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(products))
-  }, [products])
+    const productsRef = collection(db, 'products')
 
-  const addProduct = (productData) => {
-    const newProduct = {
-      id: Date.now(),
+    const unsubscribe = onSnapshot(
+      productsRef,
+      (snapshot) => {
+        const next = snapshot.docs
+          .map((docSnap) => normalizeProduct({ id: docSnap.id, ...docSnap.data() }))
+          .sort((a, b) => {
+            const aTime = a.createdAt?.seconds || 0
+            const bTime = b.createdAt?.seconds || 0
+            return bTime - aTime
+          })
+
+        setProducts(next)
+        setIsLoading(false)
+      },
+      (err) => {
+        console.error('[ProductsContext] Failed to load products:', err)
+        setProducts([])
+        setIsLoading(false)
+      }
+    )
+
+    return unsubscribe
+  }, [])
+
+  const addProduct = async (productData) => {
+    const productToCreate = {
       rating: 4.0,
       price: 2999,
       category: 'casual',
       stock: DEFAULT_STOCK,
-      ...productData
+      ...productData,
+      createdAt: serverTimestamp()
     }
 
-    setProducts(prev => [normalizeProduct(newProduct), ...prev])
-    return newProduct
+    const docRef = await addDoc(collection(db, 'products'), productToCreate)
+    return { id: docRef.id, ...productToCreate }
   }
 
-  const removeProduct = (productId) => {
-    setProducts(prev => prev.filter(product => product.id !== productId))
+  const removeProduct = async (productId) => {
+    await deleteDoc(doc(db, 'products', String(productId)))
   }
 
-  const reduceProductStocks = (cartItems) => {
-    let updateResult = { success: true, insufficient: [] }
-
-    setProducts(prevProducts => {
-      const requestedById = cartItems.reduce((acc, item) => {
-        const quantity = Number(item.quantity) || 0
-        if (quantity > 0) {
-          acc[item.id] = (acc[item.id] || 0) + quantity
-        }
-        return acc
-      }, {})
-
-      const insufficient = prevProducts
-        .filter(product => requestedById[product.id])
-        .filter(product => requestedById[product.id] > normalizeStockValue(product.stock))
-        .map(product => ({
-          id: product.id,
-          name: product.name,
-          requested: requestedById[product.id],
-          available: normalizeStockValue(product.stock)
-        }))
-
-      if (insufficient.length > 0) {
-        updateResult = { success: false, insufficient }
-        return prevProducts
+  const reduceProductStocks = async (cartItems) => {
+    const requestedById = cartItems.reduce((acc, item) => {
+      const quantity = Number(item.quantity) || 0
+      if (quantity > 0) {
+        const key = String(item.id)
+        acc[key] = (acc[key] || 0) + quantity
       }
+      return acc
+    }, {})
 
-      return prevProducts.map(product => {
-        const requested = requestedById[product.id] || 0
-        if (!requested) return product
+    const insufficient = products
+      .filter((product) => requestedById[String(product.id)])
+      .filter(
+        (product) =>
+          requestedById[String(product.id)] > normalizeStockValue(product.stock)
+      )
+      .map((product) => ({
+        id: product.id,
+        name: product.name,
+        requested: requestedById[String(product.id)],
+        available: normalizeStockValue(product.stock)
+      }))
 
-        const currentStock = normalizeStockValue(product.stock)
-        return {
-          ...product,
-          stock: Math.max(0, currentStock - requested)
-        }
-      })
+    if (insufficient.length > 0) {
+      return { success: false, insufficient }
+    }
+
+    const nextProducts = products.map((product) => {
+      const requested = requestedById[String(product.id)] || 0
+      if (!requested) return product
+
+      const currentStock = normalizeStockValue(product.stock)
+      return {
+        ...product,
+        stock: Math.max(0, currentStock - requested)
+      }
     })
 
-    return updateResult
+    setProducts(nextProducts)
+
+    try {
+      const batch = writeBatch(db)
+      nextProducts.forEach((product) => {
+        if (requestedById[String(product.id)]) {
+          batch.update(doc(db, 'products', String(product.id)), {
+            stock: normalizeStockValue(product.stock)
+          })
+        }
+      })
+      await batch.commit()
+    } catch (err) {
+      console.error('[ProductsContext] Failed to persist stock changes:', err)
+    }
+
+    return { success: true, insufficient: [] }
   }
 
+  const value = useMemo(
+    () => ({ products, addProduct, removeProduct, reduceProductStocks, isLoading }),
+    [products, isLoading]
+  )
+
   return (
-    <ProductsContext.Provider value={{ products, addProduct, removeProduct, reduceProductStocks }}>
+    <ProductsContext.Provider value={value}>
       {children}
     </ProductsContext.Provider>
   )
