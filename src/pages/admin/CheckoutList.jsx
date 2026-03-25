@@ -16,7 +16,7 @@ export default function CheckoutList() {
     ? checkouts 
     : checkouts.filter(c => c.status === filterStatus)
 
-  const handleStatusChange = (id, newStatus) => {
+  const handleStatusChange = async (id, newStatus) => {
     const checkout = checkouts.find((item) => item.id === id)
     if (!checkout) return
 
@@ -24,7 +24,7 @@ export default function CheckoutList() {
     const needsStockDeduction = isCompleting && !checkout.stockDeducted
 
     if (needsStockDeduction) {
-      const stockUpdateResult = reduceProductStocks(checkout.items || [])
+      const stockUpdateResult = await reduceProductStocks(checkout.items || [])
 
       if (!stockUpdateResult.success) {
         const message = stockUpdateResult.insufficient
@@ -34,16 +34,20 @@ export default function CheckoutList() {
         return
       }
 
-      updateCheckoutStatus(id, newStatus, { stockDeducted: true })
+      await updateCheckoutStatus(id, newStatus, { stockDeducted: true })
       return
     }
 
-    updateCheckoutStatus(id, newStatus)
+    await updateCheckoutStatus(id, newStatus)
   }
 
-  const handleDeleteCheckout = (id) => {
+  const handleDeleteCheckout = async (id) => {
     if (window.confirm('Are you sure you want to delete this checkout?')) {
-      deleteCheckout(id)
+      try {
+        await deleteCheckout(id)
+      } catch (err) {
+        alert(err?.message || 'Failed to delete checkout')
+      }
     }
   }
 

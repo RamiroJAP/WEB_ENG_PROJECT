@@ -11,7 +11,7 @@ export default function CustomerHome() {
     <div className="user-home">
       <div className="user-container">
         <section className="user-header">
-          <h1 className="user-greeting">Welcome, {user?.username || 'Shopper'}</h1>
+          <h1 className="user-greeting">Welcome, {user?.email || user?.username || 'Shopper'}</h1>
           <p className="user-tagline">Discover products and manage your shopping journey.</p>
         </section>
 

@@ -39,7 +39,7 @@ export default function LoginAdmin() {
       alert('Login successful! Welcome admin!')
       login({
         id: foundUser.id,
-        username: foundUser.username,
+        username: foundUser.email,
         email: foundUser.email,
         userType: 'admin'
       })

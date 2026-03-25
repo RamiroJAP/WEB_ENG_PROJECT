@@ -7,6 +7,8 @@ export default function AdminLayout({ children }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
+  const displayEmail = user?.email || user?.username || ''
+
   const handleLogout = () => {
     logout()
     navigate('/')
@@ -23,7 +25,7 @@ export default function AdminLayout({ children }) {
           <Link to="/admin/products">Products</Link>
           <Link to="/admin/stocks">Stocks</Link>
           <Link to="/admin/checkouts">Checkout List</Link>
-          <span className="admin-user-info">{user?.username}</span>
+          <span className="admin-user-info">{displayEmail}</span>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </nav>
       </header>
