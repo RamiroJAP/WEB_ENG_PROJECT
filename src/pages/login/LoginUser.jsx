@@ -5,15 +5,14 @@ import '../../styles/user/LoginUser.css'
 
 export default function LoginUser() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { loginWithEmail, signupWithEmail } = useAuth()
   const [showSignup, setShowSignup] = useState(false)
   const [message, setMessage] = useState('')
   const [loginData, setLoginData] = useState({
-    username: '',
+    email: '',
     password: ''
   })
   const [signupData, setSignupData] = useState({
-    username: '',
     password: '',
     email: ''
   })
@@ -35,43 +34,32 @@ export default function LoginUser() {
   const handleLogin = (e) => {
     e.preventDefault()
     setMessage('')
-    if (!loginData.username || !loginData.password) {
+    if (!loginData.email || !loginData.password) {
       alert('Please fill in all fields')
       setMessage('Please fill in all fields')
       return
     }
-    
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    const foundUser = users.find(u => 
-      (u.username === loginData.username || u.email === loginData.username) && 
-      u.password === loginData.password &&
-      u.userType === 'user'
-    )
 
-    if (foundUser) {
-      alert('Login successful! Welcome back!')
-      login({
-        id: foundUser.id,
-        username: foundUser.username,
-        email: foundUser.email,
-        userType: 'user'
+    loginWithEmail(loginData.email, loginData.password, 'user')
+      .then(() => {
+        alert('Login successful! Welcome back!')
+        setMessage('Login successful! Redirecting...')
+        setLoginData({ email: '', password: '' })
+        setTimeout(() => {
+          navigate('/')
+        }, 1200)
       })
-      setMessage('Login successful! Redirecting...')
-      setLoginData({ username: '', password: '' })
-      setTimeout(() => {
-        navigate('/')
-      }, 1500)
-    } else {
-      alert('Invalid username or password')
-      setMessage('Invalid username or password')
-    }
+      .catch((error) => {
+        alert('Invalid email or password')
+        setMessage(error.message || 'Invalid email or password')
+      })
   }
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault()
     setMessage('')
 
-    if (!signupData.username || !signupData.password || !signupData.email) {
+    if (!signupData.password || !signupData.email) {
       alert('Please fill in all fields')
       setMessage('Please fill in all fields')
       return
@@ -89,42 +77,24 @@ export default function LoginUser() {
       return
     }
 
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    if (users.find(u => u.username === signupData.username)) {
-      alert('Username already exists')
-      setMessage('Username already exists')
-      return
-    }
-
-    if (users.find(u => u.email === signupData.email)) {
-      alert('Email already exists')
-      setMessage('Email already exists')
-      return
-    }
-
-    const newUser = {
-      id: Date.now(),
-      username: signupData.username,
-      password: signupData.password,
-      email: signupData.email,
-      userType: 'user'
-    }
-
-    users.push(newUser)
-    localStorage.setItem('users', JSON.stringify(users))
-    alert('Account created successfully!')
-    setMessage('Account created! Logging you in...')
-    setSignupData({ username: '', password: '', email: '' })
-    
-    setTimeout(() => {
-      login({
-        id: newUser.id,
-        username: newUser.username,
-        email: newUser.email,
+    try {
+      await signupWithEmail({
+        email: signupData.email,
+        password: signupData.password,
         userType: 'user'
       })
-      navigate('/')
-    }, 1500)
+
+      alert('Account created successfully!')
+      setMessage('Account created! Logging you in...')
+      setSignupData({ password: '', email: '' })
+
+      setTimeout(() => {
+        navigate('/')
+      }, 1200)
+    } catch (error) {
+      alert('Could not create account')
+      setMessage(error.message || 'Could not create account')
+    }
   }
 
   const handleCreateAccount = () => {
@@ -152,13 +122,13 @@ export default function LoginUser() {
             
             <form onSubmit={handleLogin}>
               <div className="form-group">
-                <label className="form-label">Username</label>
+                <label className="form-label">Email</label>
                 <div className="input-wrapper">
-                  <span className="input-icon">👤</span>
+                  <span className="input-icon">✉️</span>
                   <input 
-                    type="text" 
-                    name="username"
-                    value={loginData.username}
+                    type="email" 
+                    name="email"
+                    value={loginData.email}
                     onChange={handleLoginChange}
                     className="form-input"
                   />
@@ -194,13 +164,13 @@ export default function LoginUser() {
             
             <form onSubmit={handleSignup}>
               <div className="form-group">
-                <label className="form-label">Username</label>
+                <label className="form-label">Email</label>
                 <div className="input-wrapper">
-                  <span className="input-icon">👤</span>
+                  <span className="input-icon">✉️</span>
                   <input 
-                    type="text" 
-                    name="username"
-                    value={signupData.username}
+                    type="email" 
+                    name="email"
+                    value={signupData.email}
                     onChange={handleSignupChange}
                     className="form-input"
                   />
@@ -215,20 +185,6 @@ export default function LoginUser() {
                     type="password" 
                     name="password"
                     value={signupData.password}
-                    onChange={handleSignupChange}
-                    className="form-input"
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Email</label>
-                <div className="input-wrapper">
-                  <span className="input-icon">✉️</span>
-                  <input 
-                    type="email" 
-                    name="email"
-                    value={signupData.email}
                     onChange={handleSignupChange}
                     className="form-input"
                   />
