@@ -9,6 +9,8 @@ export default function UserLayout({ children }) {
   const { getTotalItems } = useCart()
   const navigate = useNavigate()
 
+  const displayEmail = user?.email || user?.username || ''
+
   const handleLogout = () => {
     logout()
     navigate('/')
@@ -28,7 +30,7 @@ export default function UserLayout({ children }) {
           <Link to="/user/cart" className="cart-link">
             Cart <span className="cart-count">{getTotalItems()}</span>
           </Link>
-          <span className="user-info">Welcome, {user?.username}!</span>
+          <span className="user-info">Welcome, {displayEmail}!</span>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </nav>
       </header>

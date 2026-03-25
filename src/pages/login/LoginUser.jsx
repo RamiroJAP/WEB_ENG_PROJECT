@@ -51,7 +51,7 @@ export default function LoginUser() {
       alert('Login successful! Welcome back!')
       login({
         id: foundUser.id,
-        username: foundUser.username,
+        username: foundUser.email,
         email: foundUser.email,
         userType: 'user'
       })
@@ -95,11 +95,9 @@ export default function LoginUser() {
       return
     }
 
-    const generatedUsername = signupData.email.split('@')[0]
-
     const newUser = {
       id: Date.now(),
-      username: generatedUsername,
+      username: signupData.email,
       password: signupData.password,
       email: signupData.email,
       userType: 'user'
@@ -114,7 +112,7 @@ export default function LoginUser() {
     setTimeout(() => {
       login({
         id: newUser.id,
-        username: newUser.username,
+        username: newUser.email,
         email: newUser.email,
         userType: 'user'
       })

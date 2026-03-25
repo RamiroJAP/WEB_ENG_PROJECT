@@ -41,7 +41,7 @@ export default function Cart() {
 
     const receiptDate = new Date()
     const receiptNumber = Math.random().toString(36).slice(2, 11).toUpperCase()
-    const customerName = user?.username || 'Shopper'
+    const customerName = user?.email || user?.username || 'Shopper'
     const customerEmail = user?.email || 'user@example.com'
 
     try {
