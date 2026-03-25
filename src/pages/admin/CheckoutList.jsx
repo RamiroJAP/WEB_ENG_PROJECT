@@ -34,16 +34,20 @@ export default function CheckoutList() {
         return
       }
 
-      updateCheckoutStatus(id, newStatus, { stockDeducted: true })
+      await updateCheckoutStatus(id, newStatus, { stockDeducted: true })
       return
     }
 
-    updateCheckoutStatus(id, newStatus)
+    await updateCheckoutStatus(id, newStatus)
   }
 
-  const handleDeleteCheckout = (id) => {
+  const handleDeleteCheckout = async (id) => {
     if (window.confirm('Are you sure you want to delete this checkout?')) {
-      deleteCheckout(id)
+      try {
+        await deleteCheckout(id)
+      } catch (err) {
+        alert(err?.message || 'Failed to delete checkout')
+      }
     }
   }
 

@@ -18,7 +18,11 @@ export default function OrderTracker() {
         const orderEmail = (order.email || '').trim().toLowerCase()
         return orderCustomer === normalizedUsername || orderEmail === normalizedEmail
       })
-      .sort((a, b) => b.id - a.id)
+      .sort((a, b) => {
+        const aTime = a.createdAt?.seconds || Date.parse(a.date || '') || 0
+        const bTime = b.createdAt?.seconds || Date.parse(b.date || '') || 0
+        return bTime - aTime
+      })
   }, [checkouts, user?.email, user?.username])
 
   const getTrackerMessage = (status) => {

@@ -33,7 +33,7 @@ export default function Cart() {
     0
   )
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cartWithLivePrices.length === 0) {
       alert('Your cart is empty!')
       return
@@ -44,22 +44,26 @@ export default function Cart() {
     const customerName = user?.username || 'Shopper'
     const customerEmail = user?.email || 'user@example.com'
 
-    const newCheckout = addCheckout({
-      customer: customerName,
-      email: customerEmail,
-      total: totalPrice,
-      items: cartWithLivePrices,
-      receiptNumber
-    })
+    try {
+      const newCheckout = await addCheckout({
+        customer: customerName,
+        email: customerEmail,
+        total: totalPrice,
+        items: cartWithLivePrices,
+        receiptNumber
+      })
 
-    setReceiptData({
-      receiptNumber,
-      receiptDate: receiptDate.toISOString(),
-      customerName,
-      customerEmail,
-      status: newCheckout.status
-    })
-    setShowReceipt(true)
+      setReceiptData({
+        receiptNumber,
+        receiptDate: receiptDate.toISOString(),
+        customerName,
+        customerEmail,
+        status: newCheckout.status
+      })
+      setShowReceipt(true)
+    } catch (err) {
+      alert(err?.message || 'Checkout failed')
+    }
   }
 
   const handleReceiptClose = () => {
