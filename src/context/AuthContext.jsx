@@ -4,6 +4,23 @@ const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const defaultAdmin = {
+    id: 1,
+    username: 'Ryan',
+    email: 'arevalo.paulina29@gmail.com',
+    password: '123456',
+    userType: 'admin'
+  }
+
+  const ensureDefaultAdmin = () => {
+    const users = JSON.parse(localStorage.getItem('users') || '[]')
+    const hasAdmin = users.some((u) => u.email === defaultAdmin.email)
+
+    if (!hasAdmin) {
+      users.push(defaultAdmin)
+      localStorage.setItem('users', JSON.stringify(users))
+    }
+  }
 
   const login = (userData) => {
     setUser(userData)
@@ -17,6 +34,8 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user was logged in before (on app load)
   React.useEffect(() => {
+    ensureDefaultAdmin()
+
     const savedUser = localStorage.getItem('currentUser')
     if (savedUser) {
       setUser(JSON.parse(savedUser))

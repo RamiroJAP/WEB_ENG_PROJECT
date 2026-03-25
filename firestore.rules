@@ -1,0 +1,68 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.username is string
+        && request.resource.data.usernameLower is string
+        && (
+          request.resource.data.userType == 'user' ||
+          request.resource.data.userType == 'admin'
+        );
+
+      allow update: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.userType == resource.data.userType;
+
+      allow delete: if false;
+    }
+
+    match /usernames/{usernameLower} {
+      allow get: if true;
+      allow list: if false;
+
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.username is string
+        && request.resource.data.usernameLower == usernameLower;
+
+      allow update, delete: if false;
+    }
+
+    // Cloudinary uploads: allow creating an assignment doc with imageUrl + createdAt.
+    // This does NOT require Firebase Auth, since your app currently uses local auth.
+    match /assignments/{assignmentId} {
+      allow create: if request.resource.data.keys().hasOnly(['imageUrl', 'createdAt'])
+        && request.resource.data.imageUrl is string
+        && request.resource.data.imageUrl.size() > 0
+        && request.resource.data.createdAt is timestamp;
+
+      allow read: if true;
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
