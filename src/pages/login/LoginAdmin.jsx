@@ -94,8 +94,6 @@ export default function LoginAdmin() {
             </div>
           </div>
 
-          <a href="#" className="forgot-password">Forgot Password</a>
-
           <button className="login-btn" onClick={handleLogin}>Login</button>
         </div>
       </div>

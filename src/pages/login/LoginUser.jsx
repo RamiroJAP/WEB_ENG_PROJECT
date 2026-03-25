@@ -172,8 +172,6 @@ export default function LoginUser() {
                 </div>
               </div>
 
-              <a href="#" className="forgot-password">Forgot Password</a>
-
               <button type="submit" className="login-btn">Login</button>
 
               <button type="button" className="create-account" onClick={handleCreateAccount}>Create Account</button>
