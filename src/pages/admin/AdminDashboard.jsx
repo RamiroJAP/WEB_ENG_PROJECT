@@ -1,6 +1,9 @@
-import React, { useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import '../../styles/admin/AdminDashboard.css'
 import { useProducts } from '../../context/ProductsContext'
+import { uploadImageToCloudinary } from '../../lib/cloudinary'
+import { addDoc, collection } from 'firebase/firestore'
+import { db } from '../../firebase'
 
 export default function AdminDashboard(){
   const { products, addProduct, removeProduct } = useProducts()
@@ -28,10 +31,21 @@ export default function AdminDashboard(){
     price: '',
     color: '#FF0000',
     size: '',
-    image: null
+    imageFile: null,
+    imagePreviewUrl: null,
+    imageUrl: null
   })
   const [dragActive, setDragActive] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef(null)
+
+  useEffect(() => {
+    return () => {
+      if (newProduct.imagePreviewUrl) {
+        URL.revokeObjectURL(newProduct.imagePreviewUrl)
+      }
+    }
+  }, [newProduct.imagePreviewUrl])
 
   const getAudienceCategory = (audience) => {
     const normalized = (audience || '').toLowerCase()
@@ -61,8 +75,23 @@ export default function AdminDashboard(){
 
   const handleCloseModal = () => {
     setShowAddProductModal(false)
-    setNewProduct({ name: '', category: 'Running', audience: 'Men', stock: '', price: '', color: '#FF0000', size: '', image: null })
+    if (newProduct.imagePreviewUrl) {
+      URL.revokeObjectURL(newProduct.imagePreviewUrl)
+    }
+    setNewProduct({
+      name: '',
+      category: 'Running',
+      audience: 'Men',
+      stock: '',
+      price: '',
+      color: '#FF0000',
+      size: '',
+      imageFile: null,
+      imagePreviewUrl: null,
+      imageUrl: null
+    })
     setDragActive(false)
+    setIsUploading(false)
   }
 
   const handleInputChange = (e) => {
@@ -74,14 +103,26 @@ export default function AdminDashboard(){
     setNewProduct({ ...newProduct, color })
   }
 
+  const setSelectedImageFile = (file) => {
+    if (!file) return
+
+    if (newProduct.imagePreviewUrl) {
+      URL.revokeObjectURL(newProduct.imagePreviewUrl)
+    }
+
+    const previewUrl = URL.createObjectURL(file)
+    setNewProduct({
+      ...newProduct,
+      imageFile: file,
+      imagePreviewUrl: previewUrl,
+      imageUrl: null
+    })
+  }
+
   const handleFileSelect = (e) => {
     const files = e.target.files
     if (files && files[0]) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setNewProduct({ ...newProduct, image: event.target.result })
-      }
-      reader.readAsDataURL(files[0])
+      setSelectedImageFile(files[0])
     }
   }
 
@@ -102,11 +143,66 @@ export default function AdminDashboard(){
     
     const files = e.dataTransfer.files
     if (files && files[0]) {
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        setNewProduct({ ...newProduct, image: event.target.result })
+      setSelectedImageFile(files[0])
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!newProduct.imageFile) {
+      if (import.meta.env.DEV) {
+        console.warn('[AdminDashboard] Upload clicked but no file selected')
       }
-      reader.readAsDataURL(files[0])
+      alert('Please select an image first')
+      return
+    }
+
+    try {
+      setIsUploading(true)
+
+      if (import.meta.env.DEV) {
+        console.log('[AdminDashboard] Starting upload...')
+        console.log(
+          '[AdminDashboard] VITE_CLOUDINARY_CLOUD_NAME:',
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        )
+        console.log(
+          '[AdminDashboard] VITE_CLOUDINARY_UPLOAD_PRESET:',
+          import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+        )
+      }
+
+      const imageUrl = await uploadImageToCloudinary(newProduct.imageFile, {
+        cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      })
+
+      setNewProduct({
+        ...newProduct,
+        imageUrl
+      })
+
+      try {
+        await addDoc(collection(db, 'assignments'), {
+          imageUrl,
+          createdAt: new Date()
+        })
+        alert('Uploaded!')
+      } catch (firestoreErr) {
+        alert(
+          `Uploaded image, but saving to Firestore failed: ${
+            firestoreErr?.message || 'unknown error'
+          }`
+        )
+      }
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.error('[AdminDashboard] Upload failed:', err)
+        console.error('[AdminDashboard] Upload failed message:', err?.message)
+        console.error('[AdminDashboard] Upload failed stack:', err?.stack)
+      }
+      alert(err?.message || 'Upload failed')
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -119,10 +215,15 @@ export default function AdminDashboard(){
     const parsedStock = Number(newProduct.stock)
     const isValidStock = Number.isInteger(parsedStock) && parsedStock >= 0
 
+    if (newProduct.imageFile && !newProduct.imageUrl) {
+      alert('Please upload the image first')
+      return
+    }
+
     if (newProduct.name && newProduct.size && newProduct.category && newProduct.audience && newProduct.stock !== '' && isValidStock && parsedPrice > 0) {
       addProduct({
         name: newProduct.name,
-        image: newProduct.image || 'https://via.placeholder.com/300x300?text=New+Product',
+        image: newProduct.imageUrl || 'https://via.placeholder.com/300x300?text=New+Product',
         category: newProduct.category,
         audience: newProduct.audience,
         stock: parsedStock,
@@ -234,8 +335,12 @@ export default function AdminDashboard(){
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
               >
-                {newProduct.image ? (
-                  <img src={newProduct.image} alt="Product preview" className="picture-preview" />
+                {newProduct.imageUrl || newProduct.imagePreviewUrl ? (
+                  <img
+                    src={newProduct.imageUrl || newProduct.imagePreviewUrl}
+                    alt="Product preview"
+                    className="picture-preview"
+                  />
                 ) : (
                   <>
                     <div className="upload-icon">🔸</div>
@@ -250,6 +355,16 @@ export default function AdminDashboard(){
                 onChange={handleFileSelect}
                 style={{ display: 'none' }}
               />
+
+              <div className="modal-footer" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
+                <button
+                  className="btn-save"
+                  onClick={handleUpload}
+                  disabled={!newProduct.imageFile || isUploading}
+                >
+                  {isUploading ? 'Uploading...' : 'Upload'}
+                </button>
+              </div>
             </div>
 
             <div className="edit-section">
