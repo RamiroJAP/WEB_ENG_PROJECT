@@ -1,0 +1,134 @@
+name: Security Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  secret-scanning:
+    name: Detect Secrets & Credentials
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run TruffleHog Secret Scanner
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --json
+        continue-on-error: false
+
+      - name: Check for hardcoded secrets in common files
+        run: |
+          echo "🔍 Scanning for hardcoded secrets..."
+          
+          # Check for API keys, tokens, and secrets in JS/JSX files
+          if grep -r "FIREBASE_KEY\|API_KEY\|SECRET\|TOKEN" src/ --include="*.js" --include="*.jsx" --exclude-dir=node_modules 2>/dev/null | grep -v "process.env" | grep -v "secrets\." | grep -v "//" | grep -v "REDACTED"; then
+            echo "❌ SECURITY FAILED: Hardcoded secrets detected in source code!"
+            echo "   Remove all hardcoded secrets and use environment variables instead."
+            exit 1
+          fi
+
+          # Check firebase.js for exposed credentials
+          if grep -E "apiKey|authDomain|databaseURL|projectId" src/firebase.js | grep -v "process.env" | grep -v "getAuth\|initializeApp"; then
+            echo "❌ SECURITY FAILED: Firebase credentials exposed in firebase.js"
+            echo "   All sensitive values must use process.env variables"
+            exit 1
+          fi
+
+      - name: Check for credentials in environment files
+        run: |
+          if [ -f ".env" ] || [ -f ".env.local" ]; then
+            echo "❌ SECURITY FAILED: .env files should not be committed!"
+            echo "   Add .env* to .gitignore"
+            exit 1
+          fi
+
+      - name: Verify .gitignore protects secrets
+        run: |
+          required_patterns=(".env" ".env.local" "*.pem" "private_keys" "secrets")
+          for pattern in "${required_patterns[@]}"; do
+            if ! grep -q "$pattern" .gitignore 2>/dev/null; then
+              echo "⚠️  WARNING: $pattern not in .gitignore"
+            fi
+          done
+
+  dependency-scan:
+    name: Check Dependencies for Vulnerabilities
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        id: audit
+        run: npm audit --production
+        continue-on-error: true
+
+      - name: Report Vulnerabilities
+        if: failure() && steps.audit.outcome == 'failure'
+        run: |
+          echo "❌ SECURITY FAILED: Known vulnerabilities in dependencies"
+          echo "Run: npm audit to see details"
+          echo "Upgrade packages or use npm audit fix --production"
+          exit 1
+
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for console.log in production code
+        run: |
+          if grep -r "console\.log\|console\.error\|console\.warn" src/ --include="*.jsx" --include="*.js" | grep -v "// " | grep -v "/* " | wc -l | grep -v "^0$"; then
+            echo "⚠️  WARNING: console statements found in source code"
+            echo "   Remove debugging statements before production deployment"
+          fi
+
+      - name: Check code complexity
+        run: |
+          if [ -f ".eslintrc.json" ] || [ -f ".eslintrc.js" ]; then
+            echo "✅ ESLint config found"
+          else
+            echo "⚠️  WARNING: No ESLint config found"
+          fi

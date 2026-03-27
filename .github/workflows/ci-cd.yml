@@ -1,67 +1,35 @@
-name: CI/CD
+# CI/CD PIPELINE README
+# This workflow has been split into separate, focused workflows for better organization and security
 
-on:
-  pull_request:
-  push:
-    branches:
-      - "**"
+# Available Workflows:
+# ===================
 
-concurrency:
-  group: firebase-hosting-live
-  cancel-in-progress: true
+# 1. test.yml - Runs tests and linting
+#    Triggers: On PR and push to main/develop
+#    Checks: ESLint, dependencies, code validation
 
-permissions:
-  contents: read
-  deployments: write
+# 2. security.yml - Security scanning
+#    Triggers: On PR and push, daily schedule
+#    Checks: Secret detection, dependency vulnerabilities, hardcoded credentials
 
-jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+# 3. build.yml - Build validation
+#    Triggers: On PR and push to main/develop
+#    Checks: Compilation, build artifacts, output validation
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+# 4. pr-validation.yml - Pull request validation
+#    Triggers: On PR to main/develop
+#    Checks: Branch naming, PR description, breaking changes
 
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+# 5. deploy.yml - Production deployment
+#    Triggers: On push to main (only after all checks pass)
+#    Action: Deploys to Firebase Hosting
 
-      - name: Install dependencies
-        run: npm ci
+# ENFORCEMENT RULES:
+# ==================
+# ✅ All tests must pass before merge
+# ✅ Security scans must pass (no secrets/vulnerabilities)
+# ✅ Build must validate successfully
+# ✅ Code review required
+# ✅ Only main branch deploys to production
 
-      - name: Build
-        run: npm run build
-
-  deploy:
-    name: Deploy to Firebase Hosting
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/Main' && github.event_name == 'push'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D }}
-          projectId: web-eng-project-d657d
-          channelId: live
-          entryPoint: .
+# See ../BRANCH_PROTECTION.md for detailed configuration

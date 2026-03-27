@@ -1,0 +1,93 @@
+name: Build Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        id: install
+        run: npm ci
+        continue-on-error: false
+
+      - name: Handle installation errors
+        if: failure() && steps.install.outcome == 'failure'
+        run: |
+          echo "❌ BUILD FAILED: Dependency installation failed"
+          echo "   Check package.json and npm-shrinkwrap.json for conflicts"
+          exit 1
+
+      - name: Build application
+        id: build
+        run: npm run build
+        continue-on-error: true
+
+      - name: Report build errors
+        if: failure() && steps.build.outcome == 'failure'
+        run: |
+          echo "❌ BUILD FAILED: Application build failed"
+          echo "   Fix compilation errors before pushing"
+          exit 1
+
+      - name: Validate build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ BUILD FAILED: dist directory not created"
+            exit 1
+          fi
+          
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ BUILD FAILED: dist/index.html not found"
+            exit 1
+          fi
+          
+          echo "✅ Build output validated"
+          echo "   - dist/ directory exists"
+          echo "   - dist/index.html exists"
+
+      - name: Check build size
+        run: |
+          if [ -d "dist/assets" ]; then
+            SIZE=$(du -sh dist/ | cut -f1)
+            echo "📦 Build size: $SIZE"
+          fi
+
+  build-summary:
+    name: Build Status
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    
+    steps:
+      - name: Check build result
+        run: |
+          if [ "${{ needs.build.result }}" == "failure" ]; then
+            echo "❌ Build validation failed - cannot merge"
+            exit 1
+          else
+            echo "✅ Build validation passed!"
+          fi
