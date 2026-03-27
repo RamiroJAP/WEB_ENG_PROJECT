@@ -6,7 +6,7 @@ export default function About() {
     <div className="about-page">
       <div className="about-container">
         <section className="about-hero">
-          <h1 className="about-title">About Wolves Footwear Store</h1>
+          <h1 className="about-title">About tiger Handwear Store</h1>
           <p className="about-subtitle">Crafting Quality Footwear Since 2015</p>
         </section>
 
