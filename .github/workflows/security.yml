@@ -56,9 +56,10 @@ jobs:
 
       - name: Check for credentials in environment files
         run: |
-          if [ -f ".env" ] || [ -f ".env.local" ]; then
+          # Check if .env files are tracked by git (not just if they exist)
+          if git ls-files | grep -E "\.env$|\.env\.local$"; then
             echo "❌ SECURITY FAILED: .env files should not be committed!"
-            echo "   Add .env* to .gitignore"
+            echo "   Add .env* to .gitignore and remove from git tracking"
             exit 1
           fi
 
