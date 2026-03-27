@@ -15,10 +15,43 @@ A React + Vite footwear store web app with two experiences:
 
 ## Getting Started
 
-### Install & run
+### Automatic Clone & Setup (One Command)
+
+Copy and paste this into PowerShell:
+
+```powershell
+$url = "https://raw.githubusercontent.com/YOUR_USERNAME/WEB_ENG_PROJECT/main/clone-and-setup.ps1"; Invoke-Expression(New-Object Net.WebClient).DownloadString($url)
+```
+
+This automatically:
+- Downloads the setup script
+- Clones the repository
+- Installs all dependencies
+- Sets up git hooks for future automatic installs
+
+Your team just runs that one command and they're done!
+
+---
+
+### Alternative: Manual Setup
+
+**Windows (PowerShell):**
+```powershell
+git clone https://github.com/YOUR_USERNAME/WEB_ENG_PROJECT.git
+cd WEB_ENG_PROJECT
+.\setup.ps1
+```
+
+**Mac/Linux (Bash):**
+```bash
+git clone https://github.com/YOUR_USERNAME/WEB_ENG_PROJECT.git
+cd WEB_ENG_PROJECT
+bash setup.sh
+```
+
+### Run the app
 
 ```bash
-npm install
 npm run dev
 ```
 
