@@ -220,15 +220,6 @@ On first load, the app seeds one admin account into localStorage. If you want to
 - Product images are stored as Cloudinary URLs (upload happens from the browser).
 - Checkout receipts can be printed/downloaded via the browser print dialog.
 
-
-
-
-
-
-
-
-
-
 # Complete CI/CD Pipeline Setup Summary
 
 ## 🎯 What's Been Configured
