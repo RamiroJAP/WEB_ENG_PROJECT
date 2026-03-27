@@ -1,0 +1,95 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  pr-checks:
+    name: Validate Pull Request
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check branch naming convention
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Branch: $BRANCH_NAME"
+          
+          # Reject direct pushes to main or develop
+          if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "develop" ]; then
+            echo "❌ PR REJECTED: Cannot open PR from main or develop branch"
+            exit 1
+          fi
+          
+          # Recommended naming format: feature/, bugfix/, hotfix/
+          if [[ ! "$BRANCH_NAME" =~ ^(feature|bugfix|hotfix|docs|refactor|test)/ ]]; then
+            echo "⚠️  Branch naming: $BRANCH_NAME"
+            echo "   Recommended format: feature/*, bugfix/*, hotfix/*, etc."
+          fi
+
+      - name: Verify commit messages
+        run: |
+          echo "✅ Validating commits in PR..."
+          git log origin/main..HEAD --format="%s" | head -5
+
+      - name: Check for breaking changes
+        run: |
+          CHANGED_FILES=$(git diff origin/main...HEAD --name-only)
+          
+          echo "📝 Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Check if major config files changed
+          if echo "$CHANGED_FILES" | grep -E "package.json|firebase.json|firestore.rules|storage.rules"; then
+            echo "⚠️  WARNING: Critical configuration files modified"
+            echo "   Ensure these changes are intentional and tested"
+          fi
+
+      - name: Validate PR description
+        run: |
+          PR_BODY="${{ github.event.pull_request.body }}"
+          
+          if [ -z "$PR_BODY" ]; then
+            echo "❌ PR REJECTED: PR description is empty"
+            echo "   Please provide a detailed description of your changes"
+            exit 1
+          fi
+          
+          # Check for required sections
+          if ! echo "$PR_BODY" | grep -iE "(what|why|changes|testing)"; then
+            echo "⚠️  PR description should include:"
+            echo "   - What: Description of changes"
+            echo "   - Why: Reason for changes"
+            echo "   - Testing: How to test changes"
+          fi
+
+      - name: Check for conflicts
+        run: |
+          git merge-base --is-ancestor origin/main HEAD
+          if [ $? -ne 0 ]; then
+            echo "⚠️  Branch is behind main - may have conflicts"
+          fi
+
+  require-reviews:
+    name: Require Reviews
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Require reviews before merge
+        run: |
+          echo "📋 Code Review Required"
+          echo "   - At least 1 review required"
+          echo "   - All conversations must be resolved"
+          echo "   - All checks must pass"

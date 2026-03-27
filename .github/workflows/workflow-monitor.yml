@@ -1,0 +1,22 @@
+name: Workflow Status Monitor
+
+on:
+  workflow_run:
+    workflows: [Test & Lint, Security Scan, Build Validation, PR Validation, Deploy to Production]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  log-status:
+    name: Log Workflow Status
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Workflow completed
+        run: |
+          echo "Workflow: ${{ github.event.workflow_run.name }}"
+          echo "Status: ${{ github.event.workflow_run.conclusion }}"
+          echo "Commit: ${{ github.event.workflow_run.head_commit.message }}"
+          echo "Author: ${{ github.event.workflow_run.actor.login }}"

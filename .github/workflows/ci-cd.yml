@@ -1,0 +1,35 @@
+# CI/CD PIPELINE README
+# This workflow has been split into separate, focused workflows for better organization and security
+
+# Available Workflows:
+# ===================
+
+# 1. test.yml - Runs tests and linting
+#    Triggers: On PR and push to main/develop
+#    Checks: ESLint, dependencies, code validation
+
+# 2. security.yml - Security scanning
+#    Triggers: On PR and push, daily schedule
+#    Checks: Secret detection, dependency vulnerabilities, hardcoded credentials
+
+# 3. build.yml - Build validation
+#    Triggers: On PR and push to main/develop
+#    Checks: Compilation, build artifacts, output validation
+
+# 4. pr-validation.yml - Pull request validation
+#    Triggers: On PR to main/develop
+#    Checks: Branch naming, PR description, breaking changes
+
+# 5. deploy.yml - Production deployment
+#    Triggers: On push to main (only after all checks pass)
+#    Action: Deploys to Firebase Hosting
+
+# ENFORCEMENT RULES:
+# ==================
+# ✅ All tests must pass before merge
+# ✅ Security scans must pass (no secrets/vulnerabilities)
+# ✅ Build must validate successfully
+# ✅ Code review required
+# ✅ Only main branch deploys to production
+
+# See ../BRANCH_PROTECTION.md for detailed configuration
