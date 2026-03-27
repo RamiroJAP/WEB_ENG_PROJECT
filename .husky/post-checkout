@@ -1,6 +1,0 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-# Auto-install dependencies after checkout
-echo "📦 Checking for dependency changes..."
-npm install
