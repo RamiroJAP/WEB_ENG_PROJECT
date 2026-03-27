@@ -6,8 +6,8 @@ export default function About() {
     <div className="about-page">
       <div className="about-container">
         <section className="about-hero">
-          <h1 className="about-title">About tiger Handwear Store</h1>
-          <p className="about-subtitle">Crafting Quality Footwear Since 2015</p>
+          <h1 className="about-title">About Wolves Footwear Store</h1>
+          <p className="about-subtitle">Selling Quality Footwear Since 1999</p>
         </section>
 
         <section className="about-section">
@@ -82,10 +82,10 @@ export default function About() {
           <h2>Get In Touch</h2>
           <p>Have questions? We'd love to hear from you!</p>
           <div className="contact-info">
-            <p><strong>Email:</strong> info@wolvesfootwear.com</p>
-            <p><strong>Phone:</strong> +1 (555) 123-4567</p>
-            <p><strong>Address:</strong> 123 Fashion Street, Style City, ST 12345</p>
-            <p><strong>Hours:</strong> Mon - Fri: 9:00 AM - 6:00 PM | Sat - Sun: 10:00 AM - 4:00 PM</p>
+            <p><strong>Email:</strong> arevalo.paulina29@gmail.com</p>
+            <p><strong>Phone:</strong> 09628613540</p>
+            <p><strong>Address:</strong> Sta Rita Public Market</p>
+            <p><strong>Hours:</strong> Mon - Sun: 6:00 AM - 6:30 PM  </p>
           </div>
         </section>
       </div>
