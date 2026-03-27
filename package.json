@@ -6,6 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 5174",
+    "lint": "eslint src --ext .js,.jsx",
+    "lint:fix": "eslint src --ext .js,.jsx --fix",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -15,6 +17,7 @@
     "react-router-dom": "6.14.1"
   },
   "devDependencies": {
+    "eslint": "^8.55.0",
     "husky": "^9.1.7",
     "vite": "5.0.0"
   }
