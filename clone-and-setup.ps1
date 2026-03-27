@@ -32,6 +32,19 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+Write-Host "✓ Dependencies installed" -ForegroundColor Green
+Write-Host ""
+
+# Set up git hooks
+Write-Host "Setting up git hooks..." -ForegroundColor Green
+npx husky install
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠ Husky setup had issues, but dependencies are installed." -ForegroundColor Yellow
+} else {
+    Write-Host "✓ Git hooks configured" -ForegroundColor Green
+}
+
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Setup complete!" -ForegroundColor Green
