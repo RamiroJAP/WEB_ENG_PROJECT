@@ -29,6 +29,19 @@ npm run build
 npm run preview
 ```
 
+## CI/CD (GitHub Actions)
+
+This repo includes GitHub Actions workflows for:
+
+- **CI:** install + build on every push / PR
+- **CD:** deploy to Firebase Hosting on pushes to the `Main` branch
+
+### Required GitHub Secret (for deploy)
+
+Create a Firebase service account (with permissions to deploy Firebase Hosting for this project), then add its JSON as a GitHub repository secret named:
+
+- `FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D`
+
 ### Environment variables (Cloudinary upload)
 
 Admin product image upload uses Cloudinary and expects these Vite env vars:
