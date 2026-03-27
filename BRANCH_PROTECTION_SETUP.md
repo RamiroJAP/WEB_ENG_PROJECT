@@ -14,9 +14,9 @@ Upang maiwasan ang direktang commits sa `main` at masiguro na lahat ng tests ay 
 ## Step 3: Enable Required Protections
 
 ### ✅ Require a pull request before merging
-- Check: **"Require approvals"**
-- Set: **1** approval (o mas mataas kung gusto)
-- Check: **"Dismiss stale pull request approvals when new commits are pushed"**
+- Check: **"Require pull request reviews before merging"** (optional)
+- Set: **0** approvals (walang kailangan ng review)
+- Or leave unchecked kung gusto walang PR requirement
 
 ### ✅ Require status checks to pass before merging
 - Check: **"Require branches to be up to date before merging"**
@@ -26,9 +26,8 @@ Upang maiwasan ang direktang commits sa `main` at masiguro na lahat ng tests ay 
   - `Security - Check for Secrets`
   - `Validation Summary`
 
-### ✅ Require code reviews
-- Check: **"Require code reviews before merging"**
-- Set: **1** required review
+### ✅ Require code reviews (Optional - Skip if not needed)
+- Uncheck: **"Require code reviews before merging"** (walang mandatory review)
 
 ### ✅ Restrict who can push to matching branches
 - Check: **"Restrict who can push to matching branches"** (optional para sa super security)
