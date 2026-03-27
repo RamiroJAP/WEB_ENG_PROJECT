@@ -26,27 +26,27 @@ Automatic Deployment to Firebase
 
 ## What Happens at Each Stage
 
-### 1. Validate Stage
+# 1. Validate Stage
 - ✓ Checks for hardcoded secrets in code
 - ✓ Runs linting to find code issues
 - ✅ **Fails if:** Secrets are found in source code
 
-### 2. Build Stage
+# 2. Build Stage
 - ✓ Installs dependencies with `npm ci`
 - ✓ Builds the project with `npm run build`
 - ✓ Uploads build artifact
 - ❌ **Fails if:** Build errors occur
 
-### 3. Test Stage
+# 3. Test Stage
 - ✓ Runs unit tests with `npm test`
 - ❌ **Fails if:** Test cases fail
 
-### 4. Security Stage
+# 4. Security Stage
 - ✓ Audits dependencies for vulnerabilities
 - ✓ Checks for known security issues
 - ⚠️ **Warns if:** Moderate vulnerabilities found
 
-### 5. Deploy Stage (Main branch only)
+# 5. Deploy Stage (Main branch only)
 - ✓ Runs only after ALL other jobs pass
 - ✓ Downloads build artifact
 - ✓ Verifies Firebase secrets are configured
