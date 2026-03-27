@@ -84,7 +84,6 @@ jobs:
     name: Validation Summary
     runs-on: ubuntu-latest
     needs: [lint, build, security-check]
-    if: always()]
     if: always()
     
     steps:
