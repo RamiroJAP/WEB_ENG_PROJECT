@@ -41,16 +41,16 @@ jobs:
           echo "🔍 Scanning for hardcoded secrets..."
           
           # Check for API keys, tokens, and secrets in JS/JSX files
-          if grep -r "FIREBASE_KEY\|API_KEY\|SECRET\|TOKEN" src/ --include="*.js" --include="*.jsx" --exclude-dir=node_modules 2>/dev/null | grep -v "process.env" | grep -v "secrets\." | grep -v "//" | grep -v "REDACTED"; then
+          if grep -r "FIREBASE_KEY\|API_KEY\|SECRET\|TOKEN" src/ --include="*.js" --include="*.jsx" --exclude-dir=node_modules 2>/dev/null | grep -v "process.env" | grep -v "import.meta.env" | grep -v "secrets\." | grep -v "//" | grep -v "REDACTED"; then
             echo "❌ SECURITY FAILED: Hardcoded secrets detected in source code!"
             echo "   Remove all hardcoded secrets and use environment variables instead."
             exit 1
           fi
 
           # Check firebase.js for exposed credentials
-          if grep -E "apiKey|authDomain|databaseURL|projectId" src/firebase.js | grep -v "process.env" | grep -v "getAuth\|initializeApp"; then
+          if grep -E "apiKey|authDomain|databaseURL|projectId" src/firebase.js | grep -v "process.env" | grep -v "import.meta.env" | grep -v "getAuth\|initializeApp"; then
             echo "❌ SECURITY FAILED: Firebase credentials exposed in firebase.js"
-            echo "   All sensitive values must use process.env variables"
+            echo "   All sensitive values must use process.env or import.meta.env variables"
             exit 1
           fi
 
