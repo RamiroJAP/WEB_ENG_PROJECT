@@ -1,9 +1,10 @@
-name: Deploy (Firebase Hosting)
+name: CI/CD
 
 on:
+  pull_request:
   push:
     branches:
-      - Main
+      - "**"
 
 concurrency:
   group: firebase-hosting-live
@@ -14,9 +15,31 @@ permissions:
   deployments: write
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
   deploy:
     name: Deploy to Firebase Hosting
     runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/Main' && github.event_name == 'push'
 
     steps:
       - name: Checkout
