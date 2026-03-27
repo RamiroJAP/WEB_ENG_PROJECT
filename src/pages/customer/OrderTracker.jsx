@@ -27,14 +27,14 @@ export default function OrderTracker() {
 
   const getTrackerMessage = (status) => {
     switch (status) {
-      case 'Completed':
-        return 'Ready to pick up.'
-      case 'Pick Up':
-        return 'Ready for customer pickup.'
-      case 'Cancelled':
-        return 'Order was cancelled. Please contact support if needed.'
-      default:
-        return 'Order is being prepared by the admin team.'
+    case 'Completed':
+      return 'Ready to pick up.'
+    case 'Pick Up':
+      return 'Ready for customer pickup.'
+    case 'Cancelled':
+      return 'Order was cancelled. Please contact support if needed.'
+    default:
+      return 'Order is being prepared by the admin team.'
     }
   }
 

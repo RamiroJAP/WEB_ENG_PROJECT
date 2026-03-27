@@ -56,7 +56,7 @@ export default function Shop() {
 
     if (typeof raw === 'string') {
       const cleaned = raw
-        .split(/[\s,\/|;-]+/)
+        .split(/[\s,\\/|;-]+/)
         .map((size) => size.trim())
         .filter(Boolean)
 
@@ -327,107 +327,107 @@ export default function Shop() {
               const activeSizes = getProductSizes(activeProduct)
               return (
                 <>
-            <button className="product-modal-close" onClick={closeProductDetails}>×</button>
-            <div className="product-modal-grid">
-              <div className="product-modal-image-wrap">
-                <img
-                  src={activeProduct.image}
-                  alt={activeProduct.name}
-                  className="product-modal-image"
-                />
+                  <button className="product-modal-close" onClick={closeProductDetails}>×</button>
+                  <div className="product-modal-grid">
+                    <div className="product-modal-image-wrap">
+                      <img
+                        src={activeProduct.image}
+                        alt={activeProduct.name}
+                        className="product-modal-image"
+                      />
 
-                <div className="product-review-panel">
-                  <div className="product-review-header">
-                    <p className="product-review-title">Reviews ({activeReviews.length})</p>
-                    <p className="product-review-average">{'★'.repeat(Math.floor(activeAverageRating))} ({activeAverageRating})</p>
-                  </div>
-
-                  <div className="product-review-form">
-                    <p className="product-review-label">Write a review:</p>
-                    <div className="product-review-stars">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <button
-                          key={star}
-                          className={`review-star-btn ${reviewRating >= star ? 'active' : ''}`}
-                          onClick={() => setReviewRating(star)}
-                          title={`${star} star${star > 1 ? 's' : ''}`}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                    <textarea
-                      className="product-review-textarea"
-                      value={reviewComment}
-                      onChange={(e) => setReviewComment(e.target.value)}
-                      placeholder="Write your comment review..."
-                    />
-                    <button className="product-review-submit" onClick={handleSubmitReview}>
-                      Submit Review
-                    </button>
-                  </div>
-
-                  <div className="product-review-list">
-                    {activeReviews.length === 0 ? (
-                      <p className="product-review-empty">No reviews yet.</p>
-                    ) : (
-                      activeReviews.slice(0, 5).map(review => (
-                        <div key={review.id} className="product-review-item">
-                          <p className="product-review-item-stars">{'★'.repeat(review.rating)}</p>
-                          <p className="product-review-item-comment">{review.comment}</p>
+                      <div className="product-review-panel">
+                        <div className="product-review-header">
+                          <p className="product-review-title">Reviews ({activeReviews.length})</p>
+                          <p className="product-review-average">{'★'.repeat(Math.floor(activeAverageRating))} ({activeAverageRating})</p>
                         </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
 
-              <div className="product-modal-info">
-                <h2>{activeProduct.name}</h2>
-                <p className="product-modal-price">Price: ₱{Number(activeProduct.price || 0).toLocaleString()}</p>
+                        <div className="product-review-form">
+                          <p className="product-review-label">Write a review:</p>
+                          <div className="product-review-stars">
+                            {[1, 2, 3, 4, 5].map(star => (
+                              <button
+                                key={star}
+                                className={`review-star-btn ${reviewRating >= star ? 'active' : ''}`}
+                                onClick={() => setReviewRating(star)}
+                                title={`${star} star${star > 1 ? 's' : ''}`}
+                              >
+                          ★
+                              </button>
+                            ))}
+                          </div>
+                          <textarea
+                            className="product-review-textarea"
+                            value={reviewComment}
+                            onChange={(e) => setReviewComment(e.target.value)}
+                            placeholder="Write your comment review..."
+                          />
+                          <button className="product-review-submit" onClick={handleSubmitReview}>
+                      Submit Review
+                          </button>
+                        </div>
 
-                <p className="product-modal-label color-label">color</p>
-                <div className="product-modal-color-display">
-                  <span
-                    className="modal-color-dot-preview"
-                    style={{ backgroundColor: activeProduct.color || '#cfcfcf' }}
-                  />
-                  <span className="product-modal-color-text">{getProductColorLabel(activeProduct.color)}</span>
-                </div>
+                        <div className="product-review-list">
+                          {activeReviews.length === 0 ? (
+                            <p className="product-review-empty">No reviews yet.</p>
+                          ) : (
+                            activeReviews.slice(0, 5).map(review => (
+                              <div key={review.id} className="product-review-item">
+                                <p className="product-review-item-stars">{'★'.repeat(review.rating)}</p>
+                                <p className="product-review-item-comment">{review.comment}</p>
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
 
-                <p className="product-modal-label size-label">size</p>
-                <div className="product-modal-sizes">
-                  {activeSizes.map(size => (
-                    <button
-                      key={size}
-                      className={`modal-size-btn ${selectedSize === size ? 'active' : ''}`}
-                      onClick={() => setSelectedSize(size)}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+                    <div className="product-modal-info">
+                      <h2>{activeProduct.name}</h2>
+                      <p className="product-modal-price">Price: ₱{Number(activeProduct.price || 0).toLocaleString()}</p>
 
-                <button
-                  className="product-modal-action"
-                  onClick={() => addToCart({ ...activeProduct, selectedSize: selectedSize || activeSizes[0] || '' })}
-                >
+                      <p className="product-modal-label color-label">color</p>
+                      <div className="product-modal-color-display">
+                        <span
+                          className="modal-color-dot-preview"
+                          style={{ backgroundColor: activeProduct.color || '#cfcfcf' }}
+                        />
+                        <span className="product-modal-color-text">{getProductColorLabel(activeProduct.color)}</span>
+                      </div>
+
+                      <p className="product-modal-label size-label">size</p>
+                      <div className="product-modal-sizes">
+                        {activeSizes.map(size => (
+                          <button
+                            key={size}
+                            className={`modal-size-btn ${selectedSize === size ? 'active' : ''}`}
+                            onClick={() => setSelectedSize(size)}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        className="product-modal-action"
+                        onClick={() => addToCart({ ...activeProduct, selectedSize: selectedSize || activeSizes[0] || '' })}
+                      >
                   Add to Cart
-                </button>
-                <button
-                  className="product-modal-action secondary"
-                  onClick={() => {
-                    if (isFavorited(activeProduct.id)) {
-                      removeFromFavorites(activeProduct.id)
-                    } else {
-                      addToFavorites(activeProduct)
-                    }
-                  }}
-                >
+                      </button>
+                      <button
+                        className="product-modal-action secondary"
+                        onClick={() => {
+                          if (isFavorited(activeProduct.id)) {
+                            removeFromFavorites(activeProduct.id)
+                          } else {
+                            addToFavorites(activeProduct)
+                          }
+                        }}
+                      >
                   Add to Favorites
-                </button>
-              </div>
-            </div>
+                      </button>
+                    </div>
+                  </div>
                 </>
               )
             })()}

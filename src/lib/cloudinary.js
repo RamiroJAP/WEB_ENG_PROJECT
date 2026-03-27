@@ -3,15 +3,15 @@ const getRequiredEnv = (key) => {
   let value
 
   switch (key) {
-    case 'VITE_CLOUDINARY_CLOUD_NAME':
-      value = env?.VITE_CLOUDINARY_CLOUD_NAME
-      break
-    case 'VITE_CLOUDINARY_UPLOAD_PRESET':
-      value = env?.VITE_CLOUDINARY_UPLOAD_PRESET
-      break
-    default:
-      value = env?.[key]
-      break
+  case 'VITE_CLOUDINARY_CLOUD_NAME':
+    value = env?.VITE_CLOUDINARY_CLOUD_NAME
+    break
+  case 'VITE_CLOUDINARY_UPLOAD_PRESET':
+    value = env?.VITE_CLOUDINARY_UPLOAD_PRESET
+    break
+  default:
+    value = env?.[key]
+    break
   }
 
   if (!value) {
