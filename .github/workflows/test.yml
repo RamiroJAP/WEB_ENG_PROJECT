@@ -37,14 +37,6 @@ jobs:
       - name: Run ESLint
         id: lint
         run: npm run lint
-        continue-on-error: true
-
-      - name: Report Lint Errors
-        if: failure() && steps.lint.outcome == 'failure'
-        run: |
-          echo "❌ LINT FAILED: Code quality issues detected"
-          npm run lint
-          exit 1
 
       - name: Check for missing dependencies
         id: deps
