@@ -27,7 +27,7 @@ export default function Shop() {
   })
   const { addToFavorites, removeFromFavorites, isFavorited } = useFavorites()
   const { addToCart } = useCart()
-  const { products } = useProducts()
+  const { products, isConnected, refreshProducts, isLoading } = useProducts()
 
   useEffect(() => {
     localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(reviewsByProduct))
@@ -252,7 +252,23 @@ export default function Shop() {
 
         <main className="shop-products">
           <div className="products-header">
-            <p className="product-count">Showing {filteredProducts.length} products</p>
+            <div className="products-header-top">
+              <p className="product-count">Showing {filteredProducts.length} products</p>
+              <div className="connection-status">
+                <div className={`status-indicator ${isConnected ? 'connected' : 'disconnected'}`}></div>
+                <span className="status-text">
+                  {isConnected ? '✓ Synced' : '✗ Offline'}
+                </span>
+                <button 
+                  className="refresh-btn" 
+                  onClick={refreshProducts}
+                  disabled={isLoading}
+                  title="Refresh products"
+                >
+                  🔄
+                </button>
+              </div>
+            </div>
           </div>
 
           {filteredProducts.length > 0 ? (
