@@ -39,6 +39,14 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
+      - name: ⚠️ TEST FAILURE - Remove this step after testing
+        id: test_failure
+        run: |
+          echo "Testing pipeline notification system..."
+          echo "This step will intentionally fail to verify GitHub Actions is working"
+          exit 1
+        continue-on-error: true
+
       - name: Check for missing dependencies
         id: deps
         run: npm ls
