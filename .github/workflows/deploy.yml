@@ -31,12 +31,6 @@ jobs:
             exit 1
           fi
 
-      - name: Verify event type
-        run: |
-          if [ "${{ github.event_name }}" != "push" ]; then
-            echo "⚠️  Deployment triggered from: ${{ github.event_name }}"
-          fi
-
       - name: Check for required secrets
         run: |
           if [ -z "${{ secrets.FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D }}" ]; then
@@ -45,6 +39,12 @@ jobs:
           fi
           
           echo "✅ All required secrets are configured"
+
+      - name: Verify event type
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "⚠️  Deployment triggered from: ${{ github.event_name }}"
+          fi
 
   deploy-to-firebase:
     name: Deploy to Firebase Hosting

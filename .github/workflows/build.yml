@@ -86,7 +86,9 @@ jobs:
       - name: Check build result
         run: |
           if [ "${{ needs.build.result }}" == "failure" ]; then
-            echo "❌ Build validation failed - cannot merge"
+            echo "❌ BUILD FAILED - UPDATE REJECTED"
+            echo "   The build process failed. This PR cannot be merged."
+            echo "   Please fix the build errors and push again."
             exit 1
           else
             echo "✅ Build validation passed!"
