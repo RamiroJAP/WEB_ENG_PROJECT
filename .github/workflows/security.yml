@@ -97,16 +97,42 @@ jobs:
 
       - name: Run npm audit
         id: audit
-        run: npm audit --production
-        continue-on-error: true
+        run: npm audit --omit=dev --json > audit-report.json || true
 
       - name: Report Vulnerabilities
-        if: failure() && steps.audit.outcome == 'failure'
         run: |
-          echo "❌ SECURITY FAILED: Known vulnerabilities in dependencies"
-          echo "Run: npm audit to see details"
-          echo "Upgrade packages or use npm audit fix --production"
-          exit 1
+          HIGH=$(cat audit-report.json | node -e "
+            const d = require('fs').readFileSync('/dev/stdin','utf8');
+            const r = JSON.parse(d);
+            const vulns = r.metadata?.vulnerabilities || {};
+            console.log((vulns.high || 0) + (vulns.critical || 0));
+          ")
+
+          if [ "$HIGH" -gt "0" ]; then
+            echo ""
+            echo "WRONG - SECURITY FAILED: High/Critical vulnerabilities found"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            cat audit-report.json | node -e "
+              const d = require('fs').readFileSync('/dev/stdin','utf8');
+              const r = JSON.parse(d);
+              const vulns = r.vulnerabilities || {};
+              Object.values(vulns).forEach(v => {
+                if (v.severity === 'high' || v.severity === 'critical') {
+                  console.log('   Package : ' + v.name);
+                  console.log('   Severity: ' + v.severity.toUpperCase());
+                  console.log('   Via     : ' + (v.via||[]).map(x=>typeof x==='string'?x:x.title).join(', '));
+                  console.log('   Fix    : ' + (v.fixAvailable ? 'npm audit fix --force --omit=dev' : 'No automatic fix'));
+                  console.log('');
+                }
+              });
+            "
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  WRONG - Merge blocked. Run: npm audit fix --force --omit=dev"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          else
+            echo "CHECK - No high or critical vulnerabilities found."
+          fi
 
   code-quality:
     name: Code Quality & Security
