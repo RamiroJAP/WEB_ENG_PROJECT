@@ -86,7 +86,6 @@ export default function About() {
             <p><strong>Phone:</strong> 09628613540</p>
             <p><strong>Address:</strong> Sta Rita Public Market</p>
             <p><strong>Hours:</strong> Mon - Sun: 6:00 AM - 6:30 PM  </p>
-            a
           </div>
         </section>
       </div>
