@@ -82,10 +82,10 @@ export default function About() {
           <h2>Get In Touch</h2>
           <p>Have questions? We'd love to hear from you!</p>
           <div className="contact-info">
-            <p><strong>Email:</strong> arevalo.paulina29@gmail.com</p>
-            <p><strong>Phone:</strong> +63 962 861 3540</p>
+            <p><strong>Email Address:</strong> arevalo.paulina29@gmail.com</p>
+            <p><strong>Phone Number:</strong> +63 962 861 3540</p>
             <p><strong>Address:</strong> Sta Rita Public Market, Guiguinto, Bulacan</p>
-            <p><strong>Hours:</strong> Monday to Sunday: 6:00 AM - 6:30 PM  </p>
+            <p><strong>Opening Hours:</strong> Monday to Sunday: 6:00 AM - 6:30 PM  </p>
           </div>
         </section>
       </div>
