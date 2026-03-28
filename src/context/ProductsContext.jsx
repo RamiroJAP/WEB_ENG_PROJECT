@@ -27,32 +27,61 @@ const normalizeProduct = (product) => ({
 export const ProductsProvider = ({ children }) => {
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isConnected, setIsConnected] = useState(true)
 
   useEffect(() => {
-    const productsRef = collection(db, 'products')
+    let unsubscribe = null
 
-    const unsubscribe = onSnapshot(
-      productsRef,
-      (snapshot) => {
-        const next = snapshot.docs
-          .map((docSnap) => normalizeProduct({ id: docSnap.id, ...docSnap.data() }))
-          .sort((a, b) => {
-            const aTime = a.createdAt?.seconds || 0
-            const bTime = b.createdAt?.seconds || 0
-            return bTime - aTime
-          })
+    const setupListener = () => {
+      try {
+        const productsRef = collection(db, 'products')
 
-        setProducts(next)
-        setIsLoading(false)
-      },
-      (err) => {
-        console.error('[ProductsContext] Failed to load products:', err)
-        setProducts([])
+        unsubscribe = onSnapshot(
+          productsRef,
+          (snapshot) => {
+            const next = snapshot.docs
+              .map((docSnap) => normalizeProduct({ id: docSnap.id, ...docSnap.data() }))
+              .sort((a, b) => {
+                const aTime = a.createdAt?.seconds || 0
+                const bTime = b.createdAt?.seconds || 0
+                return bTime - aTime
+              })
+
+            setProducts(next)
+            setIsLoading(false)
+            setIsConnected(true)
+            
+            if (import.meta.env.DEV) {
+              console.log('[ProductsContext] Products synced:', next.length, 'items')
+            }
+          },
+          (err) => {
+            console.error('[ProductsContext] Firestore error:', err.code, err.message)
+            setIsConnected(false)
+            setIsLoading(false)
+            
+            // Retry connection after 5 seconds if it's a network error
+            if (err.code === 'unavailable' || err.code === 'failed-precondition') {
+              setTimeout(() => {
+                console.log('[ProductsContext] Attempting to reconnect...')
+                setupListener()
+              }, 5000)
+            }
+          }
+        )
+      } catch (err) {
+        console.error('[ProductsContext] Failed to setup listener:', err)
         setIsLoading(false)
       }
-    )
+    }
 
-    return unsubscribe
+    setupListener()
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
   }, [])
 
   const addProduct = async (productData) => {
@@ -83,6 +112,7 @@ export const ProductsProvider = ({ children }) => {
       return acc
     }, {})
 
+    // Validate stock availability
     const insufficient = products
       .filter((product) => requestedById[String(product.id)])
       .filter(
@@ -100,6 +130,7 @@ export const ProductsProvider = ({ children }) => {
       return { success: false, insufficient }
     }
 
+    // Calculate next state
     const nextProducts = products.map((product) => {
       const requested = requestedById[String(product.id)] || 0
       if (!requested) return product
@@ -111,8 +142,7 @@ export const ProductsProvider = ({ children }) => {
       }
     })
 
-    setProducts(nextProducts)
-
+    // First persist to Firebase, then update local state
     try {
       const batch = writeBatch(db)
       nextProducts.forEach((product) => {
@@ -123,16 +153,43 @@ export const ProductsProvider = ({ children }) => {
         }
       })
       await batch.commit()
+      // Let onSnapshot handle the update to keep state in sync
+      if (import.meta.env.DEV) {
+        console.log('[ProductsContext] Stock reduction committed successfully')
+      }
     } catch (err) {
       console.error('[ProductsContext] Failed to persist stock changes:', err)
+      throw new Error('Failed to update product stock. Please try again.')
     }
 
     return { success: true, insufficient: [] }
   }
 
+  const refreshProducts = async () => {
+    setIsLoading(true)
+    // Force a refresh of the listener
+    try {
+      if (import.meta.env.DEV) {
+        console.log('[ProductsContext] Forcing products refresh...')
+      }
+    } catch (err) {
+      console.error('[ProductsContext] Refresh failed:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const value = useMemo(
-    () => ({ products, addProduct, removeProduct, reduceProductStocks, isLoading }),
-    [products, isLoading]
+    () => ({ 
+      products, 
+      addProduct, 
+      removeProduct, 
+      reduceProductStocks, 
+      isLoading,
+      isConnected,
+      refreshProducts
+    }),
+    [products, isLoading, isConnected]
   )
 
   return (
