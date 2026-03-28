@@ -29,13 +29,14 @@ export default function AdminDashboard(){
   const [selectedAudience, setSelectedAudience] = useState('all')
   const [selectedType, setSelectedType] = useState('all')
   const [showAddProductModal, setShowAddProductModal] = useState(false)
+  const [showColorPicker, setShowColorPicker] = useState(false)
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: 'Running',
     audience: 'Men',
     stock: '',
     price: '',
-    color: '#FF0000',
+    color: '#FF8C00',
     size: '',
     imageFile: null,
     imagePreviewUrl: null,
@@ -91,7 +92,7 @@ export default function AdminDashboard(){
       audience: 'Men',
       stock: '',
       price: '',
-      color: '#FF0000',
+      color: '#FF8C00',
       size: '',
       imageFile: null,
       imagePreviewUrl: null,
@@ -100,6 +101,7 @@ export default function AdminDashboard(){
     setDragActive(false)
     setIsUploading(false)
     setUploadError(null)
+    setShowColorPicker(false)
   }
 
   const handleInputChange = (e) => {
@@ -468,21 +470,44 @@ export default function AdminDashboard(){
               </div>
 
               <div className="form-group">
-                <label>ADD COLOR:</label>
-                <div className="color-picker">
-                  {colorOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      className={`color-btn ${newProduct.color === option.value ? 'active' : ''}`}
-                      onClick={() => handleColorChange(option.value)}
-                      style={{ backgroundColor: option.value }}
-                      title={option.name}
-                      aria-label={option.name}
-                    >
-                      <span className="sr-only">{option.name}</span>
-                    </button>
-                  ))}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <label>ADD COLOR:</label>
+                  <button
+                    onClick={() => setShowColorPicker(!showColorPicker)}
+                    style={{
+                      background: newProduct.color,
+                      border: '2px solid #333',
+                      borderRadius: '50%',
+                      width: '40px',
+                      height: '40px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '20px',
+                      transition: 'transform 0.2s'
+                    }}
+                    title={`Toggle colors (${showColorPicker ? 'Hide' : 'Show'})`}
+                  >
+                    {showColorPicker ? '✓' : '+'}
+                  </button>
                 </div>
+                {showColorPicker && (
+                  <div className="color-picker">
+                    {colorOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        className={`color-btn ${newProduct.color === option.value ? 'active' : ''}`}
+                        onClick={() => handleColorChange(option.value)}
+                        style={{ backgroundColor: option.value }}
+                        title={option.name}
+                        aria-label={option.name}
+                      >
+                        <span className="sr-only">{option.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="form-group">
