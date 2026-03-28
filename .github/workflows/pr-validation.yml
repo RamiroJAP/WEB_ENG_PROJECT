@@ -95,7 +95,7 @@ jobs:
           echo "   - All checks must pass"
 
   merge-gate:
-    name: 🚫 Merge Gate - Test Requirement
+    name: Merge Gate - Test Requirement
     runs-on: ubuntu-latest
     if: always()
     
