@@ -12,7 +12,7 @@ export default function Login() {
   const handleUserLogin = () => {
     navigate('/login/user')
   }
-fasq/.
+
   return (
     <div className="login-page">
       <div className="login-container">
