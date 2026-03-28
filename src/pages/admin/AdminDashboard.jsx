@@ -37,6 +37,7 @@ export default function AdminDashboard(){
   })
   const [dragActive, setDragActive] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState(null)
   const fileInputRef = useRef(null)
 
   useEffect(() => {
@@ -92,6 +93,7 @@ export default function AdminDashboard(){
     })
     setDragActive(false)
     setIsUploading(false)
+    setUploadError(null)
   }
 
   const handleInputChange = (e) => {
@@ -149,26 +151,16 @@ export default function AdminDashboard(){
 
   const handleUpload = async () => {
     if (!newProduct.imageFile) {
-      if (import.meta.env.DEV) {
-        console.warn('[AdminDashboard] Upload clicked but no file selected')
-      }
-      alert('Please select an image first')
+      setUploadError('Please select an image first')
       return
     }
 
     try {
       setIsUploading(true)
+      setUploadError(null)
 
       if (import.meta.env.DEV) {
         console.log('[AdminDashboard] Starting upload...')
-        console.log(
-          '[AdminDashboard] VITE_CLOUDINARY_CLOUD_NAME:',
-          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-        )
-        console.log(
-          '[AdminDashboard] VITE_CLOUDINARY_UPLOAD_PRESET:',
-          import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-        )
       }
 
       const imageUrl = await uploadImageToCloudinary(newProduct.imageFile, {
@@ -186,21 +178,21 @@ export default function AdminDashboard(){
           imageUrl,
           createdAt: new Date()
         })
-        alert('Uploaded!')
+        alert('✓ Image uploaded successfully!')
       } catch (firestoreErr) {
         alert(
-          `Uploaded image, but saving to Firestore failed: ${
+          `✓ Image uploaded, but saving to Firestore failed. You can still use the image: ${
             firestoreErr?.message || 'unknown error'
           }`
         )
       }
     } catch (err) {
+      const errorMsg = err?.message || 'Upload failed. Please try again.'
+      setUploadError(errorMsg)
+      
       if (import.meta.env.DEV) {
         console.error('[AdminDashboard] Upload failed:', err)
-        console.error('[AdminDashboard] Upload failed message:', err?.message)
-        console.error('[AdminDashboard] Upload failed stack:', err?.stack)
       }
-      alert(err?.message || 'Upload failed')
     } finally {
       setIsUploading(false)
     }
@@ -372,6 +364,26 @@ export default function AdminDashboard(){
                 >
                   {isUploading ? 'Uploading...' : 'Upload'}
                 </button>
+                {uploadError && (
+                  <div style={{
+                    marginLeft: '12px',
+                    color: '#d32f2f',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    ✗ {uploadError}
+                  </div>
+                )}
+                {newProduct.imageUrl && !isUploading && (
+                  <div style={{
+                    marginLeft: '12px',
+                    color: '#4CAF50',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    ✓ Image uploaded successfully
+                  </div>
+                )}
               </div>
             </div>
 
