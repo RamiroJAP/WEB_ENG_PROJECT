@@ -159,14 +159,16 @@ export default function AdminDashboard(){
       setIsUploading(true)
       setUploadError(null)
 
-      if (import.meta.env.DEV) {
-        console.log('[AdminDashboard] Starting upload...')
-      }
+      console.log('[AdminDashboard] Starting upload...')
+      console.log('[AdminDashboard] VITE_CLOUDINARY_CLOUD_NAME:', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME)
+      console.log('[AdminDashboard] VITE_CLOUDINARY_UPLOAD_PRESET:', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET)
 
       const imageUrl = await uploadImageToCloudinary(newProduct.imageFile, {
         cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
         uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
       })
+
+      console.log('[AdminDashboard] Upload successful, URL:', imageUrl)
 
       setNewProduct({
         ...newProduct,
@@ -178,8 +180,10 @@ export default function AdminDashboard(){
           imageUrl,
           createdAt: new Date()
         })
+        console.log('[AdminDashboard] Saved to Firestore')
         alert('✓ Image uploaded successfully!')
       } catch (firestoreErr) {
+        console.warn('[AdminDashboard] Firestore save failed:', firestoreErr)
         alert(
           `✓ Image uploaded, but saving to Firestore failed. You can still use the image: ${
             firestoreErr?.message || 'unknown error'
@@ -188,11 +192,8 @@ export default function AdminDashboard(){
       }
     } catch (err) {
       const errorMsg = err?.message || 'Upload failed. Please try again.'
+      console.error('[AdminDashboard] Upload failed:', err)
       setUploadError(errorMsg)
-      
-      if (import.meta.env.DEV) {
-        console.error('[AdminDashboard] Upload failed:', err)
-      }
     } finally {
       setIsUploading(false)
     }
@@ -356,32 +357,60 @@ export default function AdminDashboard(){
                 style={{ display: 'none' }}
               />
 
-              <div className="modal-footer" style={{ justifyContent: 'flex-start', marginTop: 12 }}>
+              <div className="modal-footer" style={{ justifyContent: 'flex-start', marginTop: 12, alignItems: 'center', gap: '12px' }}>
                 <button
                   className="btn-save"
                   onClick={handleUpload}
                   disabled={!newProduct.imageFile || isUploading}
+                  title={isUploading ? 'Uploading...' : 'Click to upload image to Cloudinary'}
                 >
-                  {isUploading ? 'Uploading...' : 'Upload'}
+                  {isUploading ? '⏳ Uploading... (this may take a moment)' : '📤 Upload Image'}
                 </button>
                 {uploadError && (
                   <div style={{
-                    marginLeft: '12px',
-                    color: '#d32f2f',
-                    fontSize: '12px',
-                    fontWeight: '600'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
                   }}>
-                    ✗ {uploadError}
+                    <div style={{
+                      color: '#d32f2f',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      padding: '4px 8px',
+                      background: '#ffebee',
+                      borderRadius: '4px',
+                      flexGrow: 1
+                    }}>
+                      ✗ {uploadError}
+                    </div>
+                    <button
+                      onClick={handleUpload}
+                      disabled={!newProduct.imageFile || isUploading}
+                      style={{
+                        padding: '4px 12px',
+                        background: '#FF6B6B',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Retry
+                    </button>
                   </div>
                 )}
                 {newProduct.imageUrl && !isUploading && (
                   <div style={{
-                    marginLeft: '12px',
                     color: '#4CAF50',
                     fontSize: '12px',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    padding: '4px 8px',
+                    background: '#e8f5e9',
+                    borderRadius: '4px'
                   }}>
-                    ✓ Image uploaded successfully
+                    ✓ Image ready to use
                   </div>
                 )}
               </div>
