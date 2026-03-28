@@ -26,7 +26,7 @@ jobs:
       - name: Verify branch
         run: |
           if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            echo "❌ DEPLOY REJECTED: Only main branch can be deployed"
+            echo " DEPLOY REJECTED: Only main branch can be deployed"
             echo "   Current branch: ${{ github.ref }}"
             exit 1
           fi
@@ -34,16 +34,16 @@ jobs:
       - name: Check for required secrets
         run: |
           if [ -z "${{ secrets.FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D }}" ]; then
-            echo "❌ DEPLOY FAILED: FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D secret not configured"
+            echo " DEPLOY FAILED: FIREBASE_SERVICE_ACCOUNT_WEB_ENG_PROJECT_D657D secret not configured"
             exit 1
           fi
           
-          echo "✅ All required secrets are configured"
+          echo " All required secrets are configured"
 
       - name: Verify event type
         run: |
           if [ "${{ github.event_name }}" != "push" ]; then
-            echo "⚠️  Deployment triggered from: ${{ github.event_name }}"
+            echo "  Deployment triggered from: ${{ github.event_name }}"
           fi
 
   deploy-to-firebase:
@@ -70,7 +70,7 @@ jobs:
       - name: Report installation error
         if: failure() && steps.install.outcome == 'failure'
         run: |
-          echo "❌ DEPLOYMENT FAILED: Cannot install dependencies"
+          echo " DEPLOYMENT FAILED: Cannot install dependencies"
           exit 1
 
       - name: Build application
@@ -81,7 +81,7 @@ jobs:
       - name: Report build error
         if: failure() && steps.build.outcome == 'failure'
         run: |
-          echo "❌ DEPLOYMENT FAILED: Application build failed"
+          echo " DEPLOYMENT FAILED: Application build failed"
           exit 1
 
       - name: Deploy to Firebase Hosting
@@ -95,7 +95,7 @@ jobs:
 
       - name: Deployment success
         run: |
-          echo "✅ DEPLOYMENT SUCCESSFUL"
+          echo " DEPLOYMENT SUCCESSFUL"
           echo "   Deployed to Firebase Hosting (web-eng-project-d657d)"
           echo "   Commit: ${{ github.sha }}"
           echo "   Author: ${{ github.actor }}"
@@ -110,9 +110,9 @@ jobs:
       - name: Check deployment result
         run: |
           if [ "${{ needs.deploy-to-firebase.result }}" == "failure" ]; then
-            echo "❌ Deployment failed"
+            echo " Deployment failed"
             echo "   Check Firebase console for details"
             exit 1
           else
-            echo "✅ Production deployment complete!"
+            echo " Production deployment complete!"
           fi
