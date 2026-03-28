@@ -57,7 +57,7 @@ jobs:
       - name: Check for credentials in environment files
         run: |
           # .env.local should never be tracked (it's for local dev only)
-          if git ls-files | grep -E "\.env\.local"; then
+          if git ls-files | grep -E "^\.env\.local$"; then
             echo "❌ SECURITY FAILED: .env.local should not be committed!"
             echo "   Add .env.local to .gitignore and remove from git tracking"
             exit 1
