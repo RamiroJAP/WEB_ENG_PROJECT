@@ -17,7 +17,13 @@ export default function AdminDashboard(){
     { name: 'Yellow', value: '#FFD700' },
     { name: 'Blue', value: '#007BFF' },
     { name: 'Green', value: '#28A745' },
-    { name: 'Pink', value: '#FF69B4' }
+    { name: 'Pink', value: '#FF69B4' },
+    { name: 'Maroon', value: '#800000' },
+    { name: 'Gray', value: '#808080' },
+    { name: 'Navy', value: '#000080' },
+    { name: 'Teal', value: '#008080' },
+    { name: 'Orange', value: '#FF8C00' },
+    { name: 'Silver', value: '#C0C0C0' }
   ]
 
   const [selectedAudience, setSelectedAudience] = useState('all')
