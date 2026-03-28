@@ -74,8 +74,14 @@ jobs:
       - name: Check test status
         run: |
           if [ "${{ needs.test-and-lint.result }}" == "failure" ]; then
-            echo "❌ Tests failed - PR cannot be merged"
+            echo "❌ TESTS FAILED - UPDATE REJECTED"
+            echo "   Tests must pass before changes can be merged"
+            echo "   Please fix the failing tests and push again"
             exit 1
           else
-            echo "✅ All tests passed!"
+            echo "✅ All tests passed - Update approved!"
           fi
+      
+      - name: Set success status
+        if: success()
+        run: echo "✅ Test gate passed - Ready for merge"

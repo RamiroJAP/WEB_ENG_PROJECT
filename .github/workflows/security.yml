@@ -165,3 +165,39 @@ jobs:
           else
             echo "⚠️  WARNING: No ESLint config found"
           fi
+
+  security-summary:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    needs: [secret-scanning, dependency-scan, code-quality]
+    if: always()
+    
+    steps:
+      - name: Verify security checks passed
+        run: |
+          FAILED=0
+          
+          if [ "${{ needs.secret-scanning.result }}" == "failure" ]; then
+            echo "❌ SECRET SCANNING FAILED"
+            FAILED=1
+          fi
+          
+          if [ "${{ needs.dependency-scan.result }}" == "failure" ]; then
+            echo "❌ DEPENDENCY SCAN FAILED"
+            FAILED=1
+          fi
+          
+          if [ "${{ needs.code-quality.result }}" == "failure" ]; then
+            echo "❌ CODE QUALITY CHECK FAILED"
+            FAILED=1
+          fi
+          
+          if [ $FAILED -eq 1 ]; then
+            echo ""
+            echo "🚫 SECURITY GATE FAILED - UPDATE REJECTED"
+            echo "   Security checks must pass before changes can be merged"
+            echo "   Please fix the security issues and push again"
+            exit 1
+          else
+            echo "✅ ALL SECURITY CHECKS PASSED"
+          fi
