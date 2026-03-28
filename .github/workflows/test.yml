@@ -34,6 +34,28 @@ jobs:
         run: npm ci
         continue-on-error: false
 
+      - name: Detect syntax errors
+        id: syntax
+        run: |
+          echo "Checking JavaScript/JSX syntax..."
+          SYNTAX_ERRORS=0
+          
+          find src -type f \( -name "*.js" -o -name "*.jsx" \) | while read file; do
+            if ! node -c "$file" 2>/dev/null; then
+              echo "❌ SYNTAX ERROR in $file"
+              node -c "$file"
+              SYNTAX_ERRORS=$((SYNTAX_ERRORS + 1))
+            fi
+          done
+          
+          if [ $SYNTAX_ERRORS -gt 0 ]; then
+            echo "❌ Found $SYNTAX_ERRORS file(s) with syntax errors"
+            exit 1
+          else
+            echo "✅ All files have valid JavaScript/JSX syntax"
+          fi
+        continue-on-error: false
+
       - name: Run ESLint
         id: lint
         run: npm run lint
