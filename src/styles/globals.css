@@ -356,7 +356,7 @@ body {
 }
 
 .user-footer {
-  background: #333;
+  background: linear-gradient(135deg, #232326 0%, #3a3a40 100%);
   color: #999;
   text-align: center;
   padding: 2rem;
