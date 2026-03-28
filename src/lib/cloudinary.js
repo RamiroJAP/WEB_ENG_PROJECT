@@ -46,18 +46,22 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
 
   const endpoint = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
 
-  if (import.meta.env.DEV) {
-    console.log('[Cloudinary] Starting upload...')
-    console.log('[Cloudinary] Cloud Name:', cloudName)
-    console.log('[Cloudinary] File:', file.name, file.size, file.type)
-  }
+  // Always log (for production debugging)
+  console.log('[Cloudinary] Starting upload...')
+  console.log('[Cloudinary] Endpoint:', endpoint)
+  console.log('[Cloudinary] File:', file.name, file.size, file.type)
 
   let res
   try {
-    // Add 60 second timeout
+    // Increase timeout to 120 seconds for slower networks
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 60000)
+    const timeoutId = setTimeout(() => {
+      console.error('[Cloudinary] Upload timeout after 120s')
+      controller.abort()
+    }, 120000)
 
+    console.log('[Cloudinary] Initiating fetch request...')
+    
     res = await fetch(endpoint, {
       method: 'POST',
       body: formData,
@@ -66,34 +70,28 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
 
     clearTimeout(timeoutId)
 
-    if (import.meta.env.DEV) {
-      console.log('[Cloudinary] Response status:', res.status)
-    }
+    console.log('[Cloudinary] Response status:', res.status, res.statusText)
   } catch (networkErr) {
     let message = 'Upload failed'
 
     if (networkErr.name === 'AbortError') {
-      message = 'Upload timed out. Please check your connection and try again'
+      message = 'Upload timed out (120s). Your connection might be slow. Please try again.'
     } else {
       message =
         (networkErr && (networkErr.message || networkErr.toString?.())) ||
         'Network error'
     }
 
-    if (import.meta.env.DEV) {
-      console.error('[Cloudinary] Network error:', networkErr)
-    }
-
+    console.error('[Cloudinary] Network error:', networkErr.name, networkErr.message)
     throw new Error(message)
   }
 
   let data
   try {
     data = await res.json()
+    console.log('[Cloudinary] Response data:', data)
   } catch (jsonErr) {
-    if (import.meta.env.DEV) {
-      console.error('[Cloudinary] Failed to parse response:', jsonErr)
-    }
+    console.error('[Cloudinary] Failed to parse response:', jsonErr)
     throw new Error('Server returned invalid response')
   }
 
@@ -106,23 +104,15 @@ export const uploadImageToCloudinary = async (file, options = {}) => {
       message = String(data.error)
     }
 
-    if (import.meta.env.DEV) {
-      console.error('[Cloudinary] Upload error:', data)
-    }
-
+    console.error('[Cloudinary] Upload error response:', { status: res.status, data })
     throw new Error(message)
   }
 
   if (!data?.secure_url) {
-    if (import.meta.env.DEV) {
-      console.error('[Cloudinary] Missing secure_url:', data)
-    }
+    console.error('[Cloudinary] Missing secure_url in response:', data)
     throw new Error('Server response did not contain image URL')
   }
 
-  if (import.meta.env.DEV) {
-    console.log('[Cloudinary] Upload successful:', data.secure_url)
-  }
-
+  console.log('[Cloudinary] Upload successful:', data.secure_url)
   return data.secure_url
 }
