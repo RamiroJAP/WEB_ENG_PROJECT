@@ -39,15 +39,12 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
-      - name: ⚠️ TEST FAILURE - Remove this step after testing
-        id: test_failure
+      - name: "🧪 TEST MODE: Intentional Failure (Remove after testing)"
         run: |
-          echo "Testing pipeline notification system..."
-          echo "This step will intentionally fail to verify GitHub Actions is working"
+          echo "⚠️  Pipeline test mode activated"
+          echo "This intentional error tests the notification system"
+          echo "Remove this step after verifying notifications work"
           exit 1
-        continue-on-error: true
-
-      - name: Check for missing dependencies
         id: deps
         run: npm ls
         continue-on-error: true
