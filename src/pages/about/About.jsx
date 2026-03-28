@@ -85,7 +85,7 @@ export default function About() {
             <p><strong>Email Address:</strong> arevalo.paulina29@gmail.com</p>
             <p><strong>Phone Number:</strong> +63 962 861 3540</p>
             <p><strong>Address:</strong> Sta Rita Public Market, Guiguinto, Bulacan</p>
-            <p><strong>Opening Hours:</strong> Monday to Sunday: 6:00 AM - 6:00 PM </p>
+            <p><strong>Opening Hours:</strong> Monday to Sunday: 8:00 AM - 6:00 PM </p>
           </div>
         </section>
       </div>
