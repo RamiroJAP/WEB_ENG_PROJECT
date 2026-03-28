@@ -83,8 +83,8 @@ export default function About() {
           <p>Have questions? We'd love to hear from you!</p>
           <div className="contact-info">
             <p><strong>Email:</strong> arevalo.paulina29@gmail.com</p>
-            <p><strong>Phone:</strong> 09628613540123</p>
-            <p><strong>Address:</strong> Sta Rita Public Market GGGG</p>
+            <p><strong>Phone:</strong> 09628613540</p>
+            <p><strong>Address:</strong> Sta Rita Public Market</p>
             <p><strong>Hours:</strong> Mon - Sun: 6:00 AM - 6:30 PM  </p>
           </div>
         </section>
