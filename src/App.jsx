@@ -56,7 +56,7 @@ export default function App() {
   return (
     <>
       <header className="topbar">
-        <div className="brand">Wolves Footwear Store</div>
+        <div className="brand">Toota Footwear Store</div>
         <nav>
           <Link to="/shop">Shop</Link>
           <Link to="/about">About</Link>
