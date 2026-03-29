@@ -17,8 +17,8 @@ import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
 
 export default function App() {
-  const { user } = useAut()
-
+  const { user } = useAuth()
+aaaaaaaaaaa
   // Redirect based on user type
   if (user) {
     if (user.userType === 'admin') {
@@ -56,7 +56,7 @@ export default function App() {
   return (
     <>
       <header className="topbar">
-        <div className="brand">Toota Footwear Store</div>
+        <div className="brand">Toota Footwear Store break check</div>
         <nav>
           <Link to="/shop">Shop</Link>
           <Link to="/about">About</Link>
