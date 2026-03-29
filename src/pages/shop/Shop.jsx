@@ -160,7 +160,7 @@ export default function Shop() {
   return (
     <div className="shop-page">
       <section className="shop-hero">
-        <h1 className="shop-title">SHOP WOLVES FOOTWEAR</h1>
+        <h1 className="shop-title"> tootaa FOOTWEAR</h1>
         <p className="shop-subtitle">Discover Our Latest Collection of Premium Shoes</p>
       </section>
 
