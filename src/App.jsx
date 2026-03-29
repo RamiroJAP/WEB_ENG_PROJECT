@@ -17,7 +17,7 @@ import LoginAdmin from './pages/login/LoginAdmin'
 import LoginUser from './pages/login/LoginUser'
 
 export default function App() {
-  const { user } = useAuth()
+  const { user } = useAut()
 
   // Redirect based on user type
   if (user) {
