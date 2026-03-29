@@ -61,7 +61,7 @@ export default function Homepage() {
       <div className="homepage-container">
         {/* Hero Section 1 */}
         <section className="hero-section">
-          <h1 className="hero-title">tuta FOOTWEAR</h1>
+          <h1 className="hero-title">WOLVES FOOTWEAR</h1>
           <p className="hero-subtitle">Step Into Excellence. Unleash Your Style.</p>
           <button className="hero-cta" onClick={() => navigate('/shop')}>
             Shop Now
